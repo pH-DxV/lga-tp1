@@ -1,10 +1,10 @@
-package br.unitins.topicos1.lgc.Usuario.resource;
+package br.unitins.topicos1.lgc.Municipio.resource;
 
 import java.util.List;
 
-import br.unitins.topicos1.lgc.Usuario.dto.UsuarioDTO;
-import br.unitins.topicos1.lgc.Usuario.model.Usuario;
-import br.unitins.topicos1.lgc.Usuario.service.UsuarioService;
+import br.unitins.topicos1.lgc.Municipio.dto.MunicipioDTO;
+import br.unitins.topicos1.lgc.Municipio.model.Municipio;
+import br.unitins.topicos1.lgc.Municipio.service.MunicipioService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -12,43 +12,42 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
-@Path("/usuarios")
+@Path("/municipios")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class UsuarioResource {
+public class MunicipioResource {
 
     @Inject
-    UsuarioService service;
+    MunicipioService service;
 
     @GET
-    public List<Usuario> buscarTodos() {
+    public List<Municipio> buscarTodos() {
         return service.findAll();
     }
 
     @GET
     @Path("/find/{nome}")
-    public List<Usuario> buscarPorNome(@PathParam("nome") String nome) {
+    public List<Municipio> buscarPorNome(String nome) {
         return service.findByNome(nome);
     }
 
     @POST
-    public Usuario incluir(UsuarioDTO dto) {
+    public Municipio incluir(MunicipioDTO dto) {
         return service.create(dto);
     }
 
     @PUT
     @Path("/{id}")
-    public void alterar(@PathParam("id") Long id, UsuarioDTO dto) {
+    public void alterar(Long id, MunicipioDTO dto) {
         service.update(id, dto);
     }
 
     @DELETE
     @Path("/{id}")
-    public void apagar(@PathParam("id") Long id) {
+    public void apagar(Long id) {
         service.delete(id);
     }
 }
