@@ -9,7 +9,7 @@ public interface MarcaService {
 
     List<MarcaDTOResponse> findAll();
     List<MarcaDTOResponse> findByNome(String nome);
-    List<MarcaDTOResponse> findById(Long id);
+    MarcaDTOResponse findById(Long id);
 
     MarcaDTOResponse create (MarcaDTO dto);
     MarcaDTOResponse update (Long id, MarcaDTO dto);

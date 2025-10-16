@@ -10,4 +10,12 @@ public class CafeRepository implements PanacheRepository<Cafe>{
     
     // preencher com a query dos tipos de buscas possiveis (formato de texto: De acordo com o banco de dados)
 
+
+    // Adicione este método dentro da classe CafeRepository.java
+    public long countByCategoriaDoCafe(Long idCategoria) {
+
+        return count("categoriaDoCafe.id = ?1", idCategoria);
+        
+    }
+
 }
