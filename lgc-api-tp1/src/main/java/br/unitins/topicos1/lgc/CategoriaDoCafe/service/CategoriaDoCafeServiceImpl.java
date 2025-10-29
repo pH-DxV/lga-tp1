@@ -15,7 +15,7 @@ import jakarta.ws.rs.NotFoundException;
 import jakarta.validation.ConstraintViolationException;
 
 @ApplicationScoped
-public class CategoriaDoCafeServiceImpl {
+public class CategoriaDoCafeServiceImpl implements CategoriaDoCafeService {
     
     @Inject
     CategoriaDoCafeRepository categoriaRepository;
