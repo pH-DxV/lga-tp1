@@ -3,7 +3,6 @@ package br.unitins.topicos1.lgc.Marca.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import br.unitins.topicos1.lgc.Cafe.repository.CafeRepository;
 import br.unitins.topicos1.lgc.Marca.dto.MarcaDTO;
 import br.unitins.topicos1.lgc.Marca.dto.MarcaDTOResponse;
 import br.unitins.topicos1.lgc.Marca.model.Marca;

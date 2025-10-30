@@ -1,12 +1,23 @@
 package br.unitins.topicos1.lgc.Cafe.model;
 
+// Imports das entidades de relacionamento
 import br.unitins.topicos1.lgc.CategoriaDoCafe.model.CategoriaDoCafe;
 import br.unitins.topicos1.lgc.DefaultEntity.model.DefaultEntity;
 import br.unitins.topicos1.lgc.Marca.model.Marca;
-import br.unitins.topicos1.lgc.NivelDeTorra.model.NivelDeTorra;
-import br.unitins.topicos1.lgc.NotasSensoriais.model.NotasSensoriais;
 import br.unitins.topicos1.lgc.RegiaoDeOrigem.model.RegiaoDeOrigem;
+
+// Imports dos Enums simples
+import br.unitins.topicos1.lgc.NivelDeTorra.model.NivelDeTorra;
+import br.unitins.topicos1.lgc.NotaSensorial.model.NotaSensorial;
 import br.unitins.topicos1.lgc.Tratamento.model.Tratamento;
+
+// --- Imports Adicionados para a nova coleção de Notas ---
+import java.util.Set; // Para a coleção de múltiplas notas
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.FetchType;
+// --- Fim dos Imports Adicionados ---
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,12 +28,20 @@ import jakarta.persistence.ManyToOne;
 @Entity
 public class Cafe extends DefaultEntity {
     
+    // --- CAMPOS ADICIONADOS ---
+    @Column(nullable = false, length = 100)
+    private String nome;
+
+    @Column(length = 500)
+    private String descricao;
+    
+    // --- FIM DA ADIÇÃO ---
 
     @ManyToOne
     @JoinColumn(name = "id_marca")
     private Marca marca;
 
-   @ManyToOne
+    @ManyToOne
     @JoinColumn(name = "id_categoria_cafe")
     private CategoriaDoCafe categoriaDoCafe;
 
@@ -33,11 +52,8 @@ public class Cafe extends DefaultEntity {
 
     // --- ATRIBUTOS ENUMERADOS ---
 
-    @Enumerated(EnumType.STRING) // Salva o texto do enum no banco e não o número
+    @Enumerated(EnumType.STRING) 
     private NivelDeTorra nivelDeTorra;
-
-    @Enumerated(EnumType.STRING)
-    private NotasSensoriais notasSensoriais;
 
     @Enumerated(EnumType.STRING)
     private Tratamento tratamento;
@@ -56,9 +72,38 @@ public class Cafe extends DefaultEntity {
 
     @Column(nullable = false)
     private Integer estoque;
+    
+    // --- COLEÇÃO DE NOTAS SENSORIAIS ---
+    
+    @ElementCollection(fetch = FetchType.EAGER) 
+    @CollectionTable(name = "cafe_notasensorial",
+                     joinColumns = @JoinColumn(name = "id_cafe"))
+    @Enumerated(EnumType.STRING) 
+    @Column(name = "nota_sensorial", length = 30)
+    private Set<NotaSensorial> notasSensoriais;
 
+    // --- CONSTRUTOR VAZIO ---
+    public Cafe() {
+    }
 
-    // --- GET & SET ---
+    // --- GETTERS & SETTERS ---
+
+    // --- GETTERS E SETTERS ADICIONADOS ---
+    public String getNome() {
+        return nome;
+    }
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+    // --- FIM DA ADIÇÃO ---
+
     public Marca getMarca() {
         return marca;
     }
@@ -85,13 +130,6 @@ public class Cafe extends DefaultEntity {
     }
     public void setNivelDeTorra(NivelDeTorra nivelDeTorra) {
         this.nivelDeTorra = nivelDeTorra;
-    }
-
-    public NotasSensoriais getNotasSensoriais() {
-        return notasSensoriais;
-    }
-    public void setNotasSensoriais(NotasSensoriais notasSensoriais) {
-        this.notasSensoriais = notasSensoriais;
     }
 
     public Tratamento getTratamento() {
@@ -129,6 +167,10 @@ public class Cafe extends DefaultEntity {
         this.estoque = estoque;
     }
 
-
-    
+    public Set<NotaSensorial> getNotasSensoriais() {
+        return notasSensoriais;
+    }
+    public void setNotasSensoriais(Set<NotaSensorial> notasSensoriais) {
+        this.notasSensoriais = notasSensoriais;
+    }
 }
