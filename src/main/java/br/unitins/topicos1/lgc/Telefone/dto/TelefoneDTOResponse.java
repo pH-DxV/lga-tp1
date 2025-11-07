@@ -1,6 +1,6 @@
 package br.unitins.topicos1.lgc.Telefone.dto;
 
-import br.unitins.topicos1.lgc.Telefone.model.Telefone;
+import br.unitins.topicos1.lgc.TelefoneResourceTest.model.Telefone;
 
 public record TelefoneDTOResponse(
     Long id,
@@ -9,7 +9,7 @@ public record TelefoneDTOResponse(
     // Geralmente não retornamos o ID do usuário aqui, 
     // pois você buscará os telefones *a partir* do usuário.
 ) {
-    public static TelefoneDTOResponse valueOf(Telefone telefone) {
+    public static TelefoneDTOResponse valueOf(TelefoneResourceTest telefone) {
         return new TelefoneDTOResponse(
             telefone.getId(),
             telefone.getDdd(),

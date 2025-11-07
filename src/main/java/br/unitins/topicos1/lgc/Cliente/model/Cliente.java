@@ -5,7 +5,7 @@ import java.util.List;
 
 import br.unitins.topicos1.lgc.DefaultEntity.model.DefaultEntity;
 import br.unitins.topicos1.lgc.Endereco.model.Endereco;
-import br.unitins.topicos1.lgc.Telefone.model.Telefone;
+import br.unitins.topicos1.lgc.TelefoneResourceTest.model.Telefone;
 import br.unitins.topicos1.lgc.Usuario.model.Usuario;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -27,7 +27,7 @@ public class Cliente extends DefaultEntity {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_telephone", nullable =  false)
-    private Telefone telefone;
+    private TelefoneResourceTest telefone;
 
     @Column(name = "date+_de_nascimento")
     private LocalDate dataDeNascimento;
@@ -55,10 +55,10 @@ public class Cliente extends DefaultEntity {
     public void setNome(String nome) {
         this.nome = nome;
     }
-    public Telefone getTelefone() {
+    public TelefoneResourceTest getTelefone() {
         return telefone;
     }
-    public void setTelefone(Telefone telefone) {
+    public void setTelefone(TelefoneResourceTest telefone) {
         this.telefone = telefone;
     }
     public LocalDate getDataDeNascimento() {

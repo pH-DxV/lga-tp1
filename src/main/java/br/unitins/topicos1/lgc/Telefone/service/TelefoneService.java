@@ -2,8 +2,8 @@ package br.unitins.topicos1.lgc.Telefone.service;
 
 import java.util.List;
 
-import br.unitins.topicos1.lgc.Telefone.dto.TelefoneDTO;
-import br.unitins.topicos1.lgc.Telefone.dto.TelefoneDTOResponse;
+import br.unitins.topicos1.lgc.TelefoneResourceTest.dto.TelefoneDTO;
+import br.unitins.topicos1.lgc.TelefoneResourceTest.dto.TelefoneDTOResponse;
 
 public interface TelefoneService {
 

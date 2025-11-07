@@ -5,7 +5,7 @@ import java.util.List;
 
 import br.unitins.topicos1.lgc.DefaultEntity.model.DefaultEntity;
 import br.unitins.topicos1.lgc.Endereco.model.Endereco;
-import br.unitins.topicos1.lgc.Telefone.model.Telefone;
+import br.unitins.topicos1.lgc.TelefoneResourceTest.model.Telefone;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,7 +30,7 @@ public class Usuario extends DefaultEntity {
     // cascade = CascadeType.ALL: Se apagar o usuário, apaga os telefones
     // orphanRemoval = true: Se remover um telefone da lista, ele é apagado do banco
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Telefone> telefones;
+    private List<TelefoneResourceTest> telefones;
 
     // Um usuário pode ter muitos endereços
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -65,10 +65,10 @@ public class Usuario extends DefaultEntity {
         this.peso = peso;
     }
 
-    public List<Telefone> getTelefones() {
+    public List<TelefoneResourceTest> getTelefones() {
         return telefones;
     }
-    public void setTelefones(List<Telefone> telefones) {
+    public void setTelefones(List<TelefoneResourceTest> telefones) {
         this.telefones = telefones;
     }
 

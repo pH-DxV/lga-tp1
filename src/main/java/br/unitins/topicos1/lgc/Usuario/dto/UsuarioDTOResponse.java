@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import br.unitins.topicos1.lgc.Endereco.dto.EnderecoDTOResponse;
-import br.unitins.topicos1.lgc.Telefone.dto.TelefoneDTOResponse;
+import br.unitins.topicos1.lgc.TelefoneResourceTest.dto.TelefoneDTOResponse;
 import br.unitins.topicos1.lgc.Usuario.model.Usuario;
 
 public record UsuarioDTOResponse(

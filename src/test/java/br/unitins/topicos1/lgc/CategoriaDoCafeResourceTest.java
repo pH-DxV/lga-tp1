@@ -1,4 +1,5 @@
 package br.unitins.topicos1.lgc;
+
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
@@ -6,8 +7,8 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import br.unitins.topicos1.lgc.Marca.dto.MarcaDTO;
-import br.unitins.topicos1.lgc.Marca.dto.MarcaDTOResponse;
+import br.unitins.topicos1.lgc.CategoriaDoCafe.dto.CategoriaDoCafeDTO;
+import br.unitins.topicos1.lgc.CategoriaDoCafe.dto.CategoriaDoCafeDTOResponse;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
@@ -15,43 +16,43 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class MarcaResourceTest {
+public class CategoriaDoCafeResourceTest {
 
-    private static Long idMarca;
+    private static Long idCategoria;
 
     @Test
     @Order(1)
     public void testCreate() {
-        MarcaDTO dto = new MarcaDTO("Marca Teste", "Descricao Teste");
+        CategoriaDoCafeDTO dto = new CategoriaDoCafeDTO("Especial", "Cafés acima de 80 pontos.");
 
-        MarcaDTOResponse response = given()
+        CategoriaDoCafeDTOResponse response = given()
             .contentType(ContentType.JSON)
             .body(dto)
         .when()
-            .post("/marcas")
+            .post("/categorias")
         .then()
             .statusCode(201)
             .body("id", notNullValue())
-            .body("nome", is("Marca Teste"))
-            .extract().as(MarcaDTOResponse.class);
+            .body("nome", is("Especial"))
+            .extract().as(CategoriaDoCafeDTOResponse.class);
 
-        idMarca = response.id();
+        idCategoria = response.id();
     }
 
     @Test
     @Order(2)
     public void testUpdate() {
-        MarcaDTO dto = new MarcaDTO("Marca Teste (Atualizada)", "Descricao Atualizada");
+        CategoriaDoCafeDTO dto = new CategoriaDoCafeDTO("Tradicional", "Cafés para o dia a dia.");
 
         given()
             .contentType(ContentType.JSON)
             .body(dto)
         .when()
-            .put("/marcas/" + idMarca)
+            .put("/categorias/" + idCategoria)
         .then()
             .statusCode(200)
-            .body("id", is(idMarca.intValue()))
-            .body("nome", is("Marca Teste (Atualizada)"));
+            .body("id", is(idCategoria.intValue()))
+            .body("nome", is("Tradicional"));
     }
 
     @Test
@@ -59,7 +60,7 @@ public class MarcaResourceTest {
     public void testFindAll() {
         given()
         .when()
-            .get("/marcas")
+            .get("/categorias")
         .then()
             .statusCode(200);
     }
@@ -69,10 +70,10 @@ public class MarcaResourceTest {
     public void testFindById() {
         given()
         .when()
-            .get("/marcas/" + idMarca)
+            .get("/categorias/" + idCategoria)
         .then()
             .statusCode(200)
-            .body("id", is(idMarca.intValue()));
+            .body("id", is(idCategoria.intValue()));
     }
 
     @Test
@@ -80,8 +81,7 @@ public class MarcaResourceTest {
     public void testFindByNome() {
         given()
         .when()
-            // Corrigido (removemos o /nome extra)
-            .get("/marcas/search/Marca Teste") 
+            .get("/categorias/search/Tradicional")
         .then()
             .statusCode(200);
     }
@@ -91,18 +91,8 @@ public class MarcaResourceTest {
     public void testDelete() {
         given()
         .when()
-            .delete("/marcas/" + idMarca)
+            .delete("/categorias/" + idCategoria)
         .then()
             .statusCode(204);
-    }
-
-    @Test
-    @Order(7)
-    public void testFindByIdAfterDelete() {
-        given()
-        .when()
-            .get("/marcas/" + idMarca)
-        .then()
-            .statusCode(404);
     }
 }
