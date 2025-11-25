@@ -2,13 +2,19 @@ package br.unitins.topicos1.lgc.Usuario.model;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import br.unitins.topicos1.lgc.DefaultEntity.model.DefaultEntity;
 import br.unitins.topicos1.lgc.Endereco.model.Endereco;
-import br.unitins.topicos1.lgc.TelefoneResourceTest.model.Telefone;
+import br.unitins.topicos1.lgc.Perfil.model.Perfil;
+import br.unitins.topicos1.lgc.Telefone.model.Telefone;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 
 @Entity
@@ -24,13 +30,18 @@ public class Usuario extends DefaultEntity {
     
     private Double peso;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "usuario_perfil", joinColumns = @JoinColumn(name = "id_usuario"))
+    @Column(name = "id_perfil") 
+    private Set<Perfil> perfis;
+
     // --- RELACIONAMENTOS ---
 
     // Um usuário pode ter muitos telefones
     // cascade = CascadeType.ALL: Se apagar o usuário, apaga os telefones
     // orphanRemoval = true: Se remover um telefone da lista, ele é apagado do banco
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TelefoneResourceTest> telefones;
+    private List<Telefone> telefones;
 
     // Um usuário pode ter muitos endereços
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -65,10 +76,10 @@ public class Usuario extends DefaultEntity {
         this.peso = peso;
     }
 
-    public List<TelefoneResourceTest> getTelefones() {
+    public List<Telefone> getTelefones() {
         return telefones;
     }
-    public void setTelefones(List<TelefoneResourceTest> telefones) {
+    public void setTelefones(List<Telefone> telefones) {
         this.telefones = telefones;
     }
 
@@ -77,5 +88,13 @@ public class Usuario extends DefaultEntity {
     }
     public void setEnderecos(List<Endereco> enderecos) {
         this.enderecos = enderecos;
+    }
+
+    public Set<Perfil> getPerfis() {
+        return perfis;
+    }
+
+    public void setPerfis(Set<Perfil> perfis) {
+        this.perfis = perfis;
     }
 }

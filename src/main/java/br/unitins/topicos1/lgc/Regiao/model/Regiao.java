@@ -1,5 +1,8 @@
 package br.unitins.topicos1.lgc.Regiao.model;
 
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
@@ -33,5 +36,15 @@ public enum Regiao {
         }
         return null;
     }
-    
+
+    @JsonCreator
+    public static Regiao fromObject(Map<String, Object> obj) {
+        // Pega o "id" do JSON, converte para Long e busca o Enum
+        if (obj != null && obj.containsKey("id")) {
+            Number id = (Number) obj.get("id");
+            return valueOf(id.longValue());
+        }
+        return null;
+    }
+
 }

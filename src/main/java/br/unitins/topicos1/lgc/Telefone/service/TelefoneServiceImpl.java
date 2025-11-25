@@ -3,10 +3,10 @@ package br.unitins.topicos1.lgc.Telefone.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import br.unitins.topicos1.lgc.TelefoneResourceTest.dto.TelefoneDTO;
-import br.unitins.topicos1.lgc.TelefoneResourceTest.dto.TelefoneDTOResponse;
-import br.unitins.topicos1.lgc.TelefoneResourceTest.model.Telefone;
-import br.unitins.topicos1.lgc.TelefoneResourceTest.repository.TelefoneRepository;
+import br.unitins.topicos1.lgc.Telefone.dto.TelefoneDTO;
+import br.unitins.topicos1.lgc.Telefone.dto.TelefoneDTOResponse;
+import br.unitins.topicos1.lgc.Telefone.model.Telefone;
+import br.unitins.topicos1.lgc.Telefone.repository.TelefoneRepository;
 import br.unitins.topicos1.lgc.Usuario.model.Usuario;
 import br.unitins.topicos1.lgc.Usuario.repository.UsuarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -31,7 +31,7 @@ public class TelefoneServiceImpl implements TelefoneService {
             throw new NotFoundException("Usuário não encontrado.");
         }
 
-        TelefoneResourceTest entity = new TelefoneResourceTest();
+        Telefone entity = new Telefone();
         entity.setDdd(dto.ddd());
         entity.setNumero(dto.numero());
         entity.setUsuario(usuario); // Associa o telefone ao usuário
@@ -44,7 +44,7 @@ public class TelefoneServiceImpl implements TelefoneService {
     @Override
     @Transactional
     public TelefoneDTOResponse update(Long id, TelefoneDTO dto) {
-        TelefoneResourceTest entity = repository.findById(id);
+        Telefone entity = repository.findById(id);
         if (entity == null) {
             throw new NotFoundException("Telefone não encontrado.");
         }
@@ -71,7 +71,7 @@ public class TelefoneServiceImpl implements TelefoneService {
 
     @Override
     public TelefoneDTOResponse findById(Long id) {
-        TelefoneResourceTest entity = repository.findById(id);
+        Telefone entity = repository.findById(id);
         if (entity == null) {
             throw new NotFoundException("Telefone não encontrado.");
         }

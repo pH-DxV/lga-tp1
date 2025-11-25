@@ -2,9 +2,9 @@ package br.unitins.topicos1.lgc.Telefone.resource;
 
 import java.util.List;
 
-import br.unitins.topicos1.lgc.TelefoneResourceTest.dto.TelefoneDTO;
-import br.unitins.topicos1.lgc.TelefoneResourceTest.dto.TelefoneDTOResponse;
-import br.unitins.topicos1.lgc.TelefoneResourceTest.service.TelefoneService;
+import br.unitins.topicos1.lgc.Telefone.dto.TelefoneDTO;
+import br.unitins.topicos1.lgc.Telefone.dto.TelefoneDTOResponse;
+import br.unitins.topicos1.lgc.Telefone.service.TelefoneService;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
