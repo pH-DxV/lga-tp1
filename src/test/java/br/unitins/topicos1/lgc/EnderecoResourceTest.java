@@ -28,7 +28,17 @@ public class EnderecoResourceTest {
     public void setup() {
         // Cria um usuário para vincular o endereço
         if (idUsuario == null) {
-            UsuarioDTO dto = new UsuarioDTO("Usuario Teste Endereco", "11188899900", null, 80.0);
+            // CORREÇÃO AQUI: Usando o construtor completo do UsuarioDTO
+            UsuarioDTO dto = new UsuarioDTO(
+                "Usuario Teste Endereco", 
+                "user_endereco", // login
+                "123456",        // senha
+                "11188899900",   // cpf
+                2,               // perfil (User)
+                null,            // dataNascimento
+                80.0             // peso
+            );
+            
             idUsuario = given()
                 .contentType(ContentType.JSON)
                 .body(dto)
@@ -40,15 +50,13 @@ public class EnderecoResourceTest {
     @Test
     @Order(1)
     public void testCreate() {
-        // Assumindo que seu DTO pede: cep, rua, complemento, idUsuario
-        // Se pedir idMunicipio também, você precisará criar um Municipio no setup()
         EnderecoDTO dto = new EnderecoDTO("77000000", "Rua das Flores", "Quadra 10", idUsuario);
 
         EnderecoDTOResponse response = given()
             .contentType(ContentType.JSON)
             .body(dto)
         .when()
-            .post("/endereco") // Verifique se sua rota é /endereco ou /enderecos
+            .post("/endereco")
         .then()
             .statusCode(201)
             .body("id", notNullValue())

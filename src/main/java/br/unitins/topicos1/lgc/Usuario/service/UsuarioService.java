@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.unitins.topicos1.lgc.Usuario.dto.UsuarioDTO;
 import br.unitins.topicos1.lgc.Usuario.dto.UsuarioDTOResponse;
+import br.unitins.topicos1.lgc.Usuario.model.Usuario;
 
 public interface UsuarioService {
 
@@ -14,6 +15,8 @@ public interface UsuarioService {
 
     // --- CONSULTAS ---
     UsuarioDTOResponse findById(Long id);
+    Usuario findByLoginAndSenha(String login, String senha);
     List<UsuarioDTOResponse> findAll();
     List<UsuarioDTOResponse> findByNome(String nome);
+    
 }

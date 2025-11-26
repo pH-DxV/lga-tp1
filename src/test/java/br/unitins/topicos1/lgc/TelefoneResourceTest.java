@@ -27,15 +27,26 @@ public class TelefoneResourceTest {
     // Roda antes do 'testCreate' para garantir que temos um usuário
     @BeforeEach
     public void setup() {
-        // Só cria o usuário uma vez
+        // Cria um usuário para vincular
         if (idUsuario == null) {
-            UsuarioDTO dto = new UsuarioDTO("Usuario Para Teste Telefone", "99988877766", null, 70.0);
+            UsuarioDTO dto = new UsuarioDTO(
+                "Usuario Teste Vinculo", 
+                "user_vinculo", // login
+                "123456",       // senha
+                "99988877700",  // cpf
+                2,              // perfil (USER)
+                null, 
+                70.0
+            );
+            
             idUsuario = given()
                 .contentType(ContentType.JSON)
                 .body(dto)
                 .when().post("/usuarios")
                 .then().statusCode(201).extract().as(UsuarioDTOResponse.class).id();
         }
+        
+        // (No caso do EnderecoResourceTest, mantenha a lógica de criar o Estado/Municipio aqui também se houver)
     }
 
     @Test

@@ -1,11 +1,19 @@
 package br.unitins.topicos1.lgc.Perfil.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+
+@JsonFormat(shape = Shape.OBJECT)
 public enum Perfil {
 
-    ADM (1l, "Administrador"),
-    USER (2l, "Usuário");
+    ADM (1L, "Administrador"),
+    USER (2L, "Usuario");
 
+    @JsonProperty("id")
     public final Long ID;
+
+    @JsonProperty("label")
     public final String LABEL;
 
     Perfil(Long id, String label) {
@@ -21,7 +29,7 @@ public enum Perfil {
             if (perfil.ID.equals(id))
                 return perfil;
         
-        throw new IllegalArgumentException("id inválido");
+        throw new IllegalArgumentException("id invalido");
     }
 
 }

@@ -23,7 +23,16 @@ public class UsuarioResourceTest {
     @Test
     @Order(1)
     public void testCreate() {
-        UsuarioDTO dto = new UsuarioDTO("Usuario Teste", "11122233344", null, 75.5);
+        // ATUALIZADO: Agora passamos login, senha e idPerfil (1=Admin, 2=User)
+        UsuarioDTO dto = new UsuarioDTO(
+            "Usuario Teste", 
+            "usuario_teste", // login
+            "123456",        // senha
+            "11122233344", 
+            2,               // idPerfil (2 = User)
+            null,            // dataNascimento
+            75.5             // peso
+        );
 
         UsuarioDTOResponse response = given()
             .contentType(ContentType.JSON)
@@ -34,6 +43,7 @@ public class UsuarioResourceTest {
             .statusCode(201)
             .body("id", notNullValue())
             .body("nome", is("Usuario Teste"))
+            .body("login", is("usuario_teste")) // Verifica se o login voltou
             .body("cpf", is("11122233344"))
             .extract().as(UsuarioDTOResponse.class);
 
@@ -41,9 +51,44 @@ public class UsuarioResourceTest {
     }
 
     @Test
+    @Order(2) // Pode rodar logo após criar o usuário comum
+    public void testCreateAdmin() {
+        UsuarioDTO dto = new UsuarioDTO(
+            "Admin Teste", 
+            "admin_teste", 
+            "123456", 
+            "00011122233", // CPF diferente para não dar conflito
+            1,             // <--- idPerfil 1 (ADMINISTRADOR)
+            null, 
+            80.0
+        );
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(dto)
+        .when()
+            .post("/usuarios")
+        .then()
+            .statusCode(201)
+            .body("nome", is("Admin Teste"))
+            // Verifica se dentro da lista de perfis tem o objeto com label "Administrador"
+            // Como o Perfil é serializado como objeto JSON, buscamos pelo campo label
+            .body("perfis[0].label", is("Administrador")); 
+    }
+    
+    @Test
     @Order(2)
     public void testUpdate() {
-        UsuarioDTO dto = new UsuarioDTO("Usuario Teste Atualizado", "55566677788", null, 80.0);
+        // ATUALIZADO: DTO completo para update
+        UsuarioDTO dto = new UsuarioDTO(
+            "Usuario Teste Atualizado", 
+            "usuario_teste", // Mantém o login
+            "123456",        // Mantém a senha
+            "55566677788",   // Novo CPF
+            2, 
+            null, 
+            80.0
+        );
 
         given()
             .contentType(ContentType.JSON)
