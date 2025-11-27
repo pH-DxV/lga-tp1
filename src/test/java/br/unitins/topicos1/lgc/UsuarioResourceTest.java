@@ -30,8 +30,7 @@ public class UsuarioResourceTest {
             "123456",        // senha
             "11122233344", 
             2,               // idPerfil (2 = User)
-            null,            // dataNascimento
-            75.5             // peso
+            null            // dataNascimento
         );
 
         UsuarioDTOResponse response = given()
@@ -59,8 +58,7 @@ public class UsuarioResourceTest {
             "123456", 
             "00011122233", // CPF diferente para não dar conflito
             1,             // <--- idPerfil 1 (ADMINISTRADOR)
-            null, 
-            80.0
+            null 
         );
 
         given()
@@ -86,8 +84,7 @@ public class UsuarioResourceTest {
             "123456",        // Mantém a senha
             "55566677788",   // Novo CPF
             2, 
-            null, 
-            80.0
+            null 
         );
 
         given()

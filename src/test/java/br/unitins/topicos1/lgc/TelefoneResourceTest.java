@@ -35,8 +35,7 @@ public class TelefoneResourceTest {
                 "123456",       // senha
                 "99988877700",  // cpf
                 2,              // perfil (USER)
-                null, 
-                70.0
+                null
             );
             
             idUsuario = given()

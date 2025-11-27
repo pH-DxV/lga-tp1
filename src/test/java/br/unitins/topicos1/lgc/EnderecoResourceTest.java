@@ -35,8 +35,7 @@ public class EnderecoResourceTest {
                 "123456",        // senha
                 "11188899900",   // cpf
                 2,               // perfil (User)
-                null,            // dataNascimento
-                80.0             // peso
+                null            // dataNascimento
             );
             
             idUsuario = given()

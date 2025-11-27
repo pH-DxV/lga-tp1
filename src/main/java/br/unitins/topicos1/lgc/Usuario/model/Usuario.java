@@ -15,10 +15,13 @@ import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Usuario extends DefaultEntity {
 
     @Column(length = 100, nullable = false)
@@ -37,7 +40,6 @@ public class Usuario extends DefaultEntity {
 
     private LocalDate dataNascimento;
     
-    private Double peso;
 
     // --- RELACIONAMENTOS ---
 
@@ -69,9 +71,6 @@ public class Usuario extends DefaultEntity {
 
     public LocalDate getDataNascimento() { return dataNascimento; }
     public void setDataNascimento(LocalDate dataNascimento) { this.dataNascimento = dataNascimento; }
-
-    public Double getPeso() { return peso; }
-    public void setPeso(Double peso) { this.peso = peso; }
 
     public List<Telefone> getTelefones() { return telefones; }
     public void setTelefones(List<Telefone> telefones) { this.telefones = telefones; }

@@ -44,7 +44,7 @@ public class PedidoResourceTest {
         // 1. Cria Usuário (se não existir)
         if (idUsuario == null) {
             // Usa um CPF aleatório ou fixo que não conflite
-            UsuarioDTO dto = new UsuarioDTO("Cliente Pedido", "cliente_pedido", "123456", "12345678999", 2, null, 70.0);
+            UsuarioDTO dto = new UsuarioDTO("Cliente Pedido", "cliente_pedido", "123456", "12345678999", 2, null);
             idUsuario = given()
                 .contentType(ContentType.JSON)
                 .body(dto)

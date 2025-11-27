@@ -1,11 +1,10 @@
-package br.unitins.topicos1.lgc.Usuario.dto;
+package br.unitins.topicos1.lgc.Cliente.dto;
 
 import java.time.LocalDate;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record UsuarioDTO(
+public record ClienteDTO(
     @NotBlank(message = "O nome não pode ser nulo.")
     String nome,
 
@@ -19,8 +18,7 @@ public record UsuarioDTO(
     @Size(min = 11, max = 11, message = "O CPF deve ter 11 dígitos.")
     String cpf,
 
-    @NotNull(message = "O perfil deve ser informado (1=Adm, 2=User).")
-    Integer idPerfil,
+    // SEM idPerfil, pois o perfil é forçado como USER no Service.
 
     LocalDate dataNascimento
     

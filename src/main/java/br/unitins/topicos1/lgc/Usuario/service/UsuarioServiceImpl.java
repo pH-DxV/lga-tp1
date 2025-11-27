@@ -41,7 +41,6 @@ public class UsuarioServiceImpl implements UsuarioService {
         entity.setPerfis(Set.of(Perfil.valueOf(dto.idPerfil().longValue())));
 
         entity.setDataNascimento(dto.dataNascimento());
-        entity.setPeso(dto.peso());
         
         repository.persist(entity);
         
@@ -68,7 +67,6 @@ public class UsuarioServiceImpl implements UsuarioService {
         entity.setPerfis(Set.of(Perfil.valueOf(dto.idPerfil().longValue())));
 
         entity.setDataNascimento(dto.dataNascimento());
-        entity.setPeso(dto.peso());
         
         return UsuarioDTOResponse.valueOf(entity);
     }

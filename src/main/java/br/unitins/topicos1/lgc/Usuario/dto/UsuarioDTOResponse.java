@@ -16,7 +16,6 @@ public record UsuarioDTOResponse(
     String login, // Adicionado
     String cpf,
     LocalDate dataNascimento,
-    Double peso,
     Set<Perfil> perfis, // Adicionado: Retorna os perfis (User, Adm)
     List<TelefoneDTOResponse> telefones,
     List<EnderecoDTOResponse> enderecos
@@ -35,7 +34,6 @@ public record UsuarioDTOResponse(
             usuario.getLogin(), // Adicionado
             usuario.getCpf(),
             usuario.getDataNascimento(),
-            usuario.getPeso(),
             usuario.getPerfis(), // Adicionado
             tels,
             ends
