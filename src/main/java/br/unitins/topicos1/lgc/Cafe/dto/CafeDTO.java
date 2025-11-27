@@ -24,7 +24,7 @@ public record CafeDTO(
     @NotNull(message = "O ID da Categoria do Café não pode ser nulo.")
     Long idCategoriaDoCafe,
     
-    // Long idRegiaoDeOrigem, // TODO
+    // Long idRegiaoDeOrigem, // Futuro
 
     @NotNull(message = "O ID do Nível de Torra não pode ser nulo.")
     Long idNivelDeTorra,

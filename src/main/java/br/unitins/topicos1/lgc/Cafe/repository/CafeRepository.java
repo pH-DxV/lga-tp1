@@ -12,22 +12,21 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class CafeRepository implements PanacheRepository<Cafe> {
 
-    // Método que já tínhamos (para a regra de deleção)
+    // Para regras de deleção de Marca/Categoria
     public long countByMarca(Long idMarca) {
         return count("marca.id = ?1", idMarca);
     }
 
-    // Método que já tínhamos (para a regra de deleção)
     public long countByCategoriaDoCafe(Long idCategoria) {
         return count("categoriaDoCafe.id = ?1", idCategoria);
     }
     
-    // Busca por nome (LIKE)
+    // Busca por nome (case-insensitive)
     public List<Cafe> findByNomeLike(String nome) {
         return find("UPPER(nome) LIKE ?1", "%" + nome.toUpperCase() + "%").list();
     }
     
-    // Busca por faixa de pontuação SCA (que criamos antes)
+    // Busca por pontuação
     public List<Cafe> findByPontuacaoRange(Integer minSCA, Integer maxSCA) {
         Map<String, Object> params = new HashMap<>();
         StringBuilder query = new StringBuilder("1 = 1 "); 

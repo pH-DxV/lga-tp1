@@ -80,7 +80,6 @@ public class MarcaResourceTest {
     public void testFindByNome() {
         given()
         .when()
-            // Corrigido (removemos o /nome extra)
             .get("/marcas/search/Marca Teste") 
         .then()
             .statusCode(200);
@@ -104,5 +103,38 @@ public class MarcaResourceTest {
             .get("/marcas/" + idMarca)
         .then()
             .statusCode(404);
+    }
+
+    // --- NOVOS TESTES DE TRATAMENTO DE ERRO ---
+
+    @Test
+    @Order(8)
+    public void testCreateInvalidMarca() {
+        // DTO inválido (Nome nulo) para testar o ValidationExceptionMapper
+        MarcaDTO dto = new MarcaDTO(null, "Descrição válida");
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(dto)
+        .when()
+            .post("/marcas")
+        .then()
+            .statusCode(400) // Esperamos Bad Request
+            // Verificamos se o JSON de erro (Problem Details) está correto
+            .body("title", is("Erro de validação")) 
+            .body("errors[0].message", is("O nome não pode ser nulo ou vazio.")); 
+    }
+
+    @Test
+    @Order(9)
+    public void testFindByIdNotFound() {
+        // ID que com certeza não existe
+        Long idInexistente = 999999L;
+
+        given()
+        .when()
+            .get("/marcas/" + idInexistente)
+        .then()
+            .statusCode(404); // Esperamos Not Found
     }
 }

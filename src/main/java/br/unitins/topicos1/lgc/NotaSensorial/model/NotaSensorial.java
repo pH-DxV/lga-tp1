@@ -1,5 +1,8 @@
 package br.unitins.topicos1.lgc.NotaSensorial.model;
 
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
@@ -52,14 +55,21 @@ public enum NotaSensorial {
         this.NOME = nome;
         this.CATEGORIA = categoria;
     }
-    
-    // Este valueOf NÃO será usado pelo AttributeConverter, 
-    // mas pode ser útil para buscas internas se necessário.
+
     public static NotaSensorial valueOf(Long id) {
         if (id == null) return null;
         for (NotaSensorial nota : NotaSensorial.values()) {
             if (id.equals(nota.ID)) return nota;
         }
         throw new IllegalArgumentException("ID de NotaSensorial inválido: " + id);
+    }
+    
+    @JsonCreator
+    public static NotaSensorial fromObject(Map<String, Object> obj) {
+        if (obj != null && obj.containsKey("id")) {
+            Number id = (Number) obj.get("id");
+            return valueOf(id.longValue());
+        }
+        return null;
     }
 }

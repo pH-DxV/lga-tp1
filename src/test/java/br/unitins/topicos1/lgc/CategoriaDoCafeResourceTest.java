@@ -23,7 +23,10 @@ public class CategoriaDoCafeResourceTest {
     @Test
     @Order(1)
     public void testCreate() {
-        CategoriaDoCafeDTO dto = new CategoriaDoCafeDTO("Especial", "Cafés acima de 80 pontos.");
+        // Use System.currentTimeMillis() para garantir um nome único sempre
+        String nomeUnico = "Especial " + System.currentTimeMillis();
+        
+        CategoriaDoCafeDTO dto = new CategoriaDoCafeDTO(nomeUnico, "Cafés acima de 80 pontos.");
 
         CategoriaDoCafeDTOResponse response = given()
             .contentType(ContentType.JSON)
@@ -33,7 +36,7 @@ public class CategoriaDoCafeResourceTest {
         .then()
             .statusCode(201)
             .body("id", notNullValue())
-            .body("nome", is("Especial"))
+            .body("nome", is(nomeUnico))
             .extract().as(CategoriaDoCafeDTOResponse.class);
 
         idCategoria = response.id();
@@ -42,7 +45,10 @@ public class CategoriaDoCafeResourceTest {
     @Test
     @Order(2)
     public void testUpdate() {
-        CategoriaDoCafeDTO dto = new CategoriaDoCafeDTO("Tradicional", "Cafés para o dia a dia.");
+        // CORREÇÃO: Nome único para evitar conflito com o banco existente
+        String nomeUpdate = "Tradicional " + System.currentTimeMillis();
+        
+        CategoriaDoCafeDTO dto = new CategoriaDoCafeDTO(nomeUpdate, "Cafés para o dia a dia.");
 
         given()
             .contentType(ContentType.JSON)
@@ -52,7 +58,7 @@ public class CategoriaDoCafeResourceTest {
         .then()
             .statusCode(200)
             .body("id", is(idCategoria.intValue()))
-            .body("nome", is("Tradicional"));
+            .body("nome", is(nomeUpdate));
     }
 
     @Test

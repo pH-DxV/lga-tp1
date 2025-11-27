@@ -1,5 +1,8 @@
 package br.unitins.topicos1.lgc.Tratamento.model;
 
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -45,5 +48,14 @@ public enum Tratamento {
             }
         }
         throw new IllegalArgumentException("ID de Tratamento inválido: " + id);
+    }
+
+    @JsonCreator
+    public static Tratamento fromObject(Map<String, Object> obj) {
+        if (obj != null && obj.containsKey("id")) {
+            Number id = (Number) obj.get("id");
+            return valueOf(id.longValue());
+        }
+        return null;
     }
 }

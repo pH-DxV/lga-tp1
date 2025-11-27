@@ -15,7 +15,7 @@ public record CafeDTOResponse(
     String descricao,
     MarcaDTOResponse marca,
     CategoriaDoCafeDTOResponse categoriaDoCafe,
-    // RegiaoDeOrigemDTOResponse regiaoDeOrigem, // TODO
+    // RegiaoDeOrigemDTOResponse regiaoDeOrigem, 
     NivelDeTorra nivelDeTorra,
     Tratamento tratamento,
     Set<NotaSensorial> notasSensoriais,
@@ -25,13 +25,13 @@ public record CafeDTOResponse(
     Integer estoque
 ) {
     public static CafeDTOResponse valueOf(Cafe cafe) {
-        // TODO: Adicionar regiaoDeOrigem quando estiver pronto
         return new CafeDTOResponse(
             cafe.getId(),
             cafe.getNome(),
             cafe.getDescricao(),
             MarcaDTOResponse.valueOf(cafe.getMarca()),
             CategoriaDoCafeDTOResponse.valueOf(cafe.getCategoriaDoCafe()),
+            // TODO: regiaoDeOrigem
             cafe.getNivelDeTorra(),
             cafe.getTratamento(),
             cafe.getNotasSensoriais(),
