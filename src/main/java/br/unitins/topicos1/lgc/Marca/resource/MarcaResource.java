@@ -2,6 +2,7 @@ package br.unitins.topicos1.lgc.Marca.resource;
 
 import br.unitins.topicos1.lgc.Marca.dto.MarcaDTO;
 import br.unitins.topicos1.lgc.Marca.service.MarcaService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -26,6 +27,7 @@ public class MarcaResource {
     MarcaService marcaService;
 
     @POST
+    @RolesAllowed({"Administrador"})
     public Response create(@Valid MarcaDTO dto) {
         return Response.status(Status.CREATED).entity(marcaService.create(dto)).build();
     }
@@ -33,6 +35,7 @@ public class MarcaResource {
     @PUT
     @Transactional
     @Path("/{id}")
+    @RolesAllowed({"Administrador"})
     public Response update(@PathParam("id") Long id, @Valid MarcaDTO dto) {
         return Response.ok(marcaService.update(id, dto)).build();
     }
@@ -40,24 +43,28 @@ public class MarcaResource {
     @DELETE
     @Transactional
     @Path("/{id}")
+    @RolesAllowed({"Administrador"})
     public Response delete(@PathParam("id") Long id) {
         marcaService.delete(id);
         return Response.noContent().build();
     }
 
     @GET
+    @RolesAllowed({"Administrador"})
     public Response findAll() {
         return Response.ok(marcaService.findAll()).build();
     }
 
     @GET
     @Path("/{id}")
+    @RolesAllowed({"Administrador"})
     public Response findById(@PathParam("id") Long id) {
         return Response.ok(marcaService.findById(id)).build();
     }
 
     @GET
     @Path("/search/{nome}")
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response findByNome(@PathParam("nome") String nome) {
         return Response.ok(marcaService.findByNome(nome)).build();
     }

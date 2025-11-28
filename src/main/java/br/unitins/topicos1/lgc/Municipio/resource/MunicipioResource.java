@@ -5,6 +5,7 @@ import java.util.List;
 import br.unitins.topicos1.lgc.Municipio.dto.MunicipioDTO;
 import br.unitins.topicos1.lgc.Municipio.dto.MunicipioDTOResponse;
 import br.unitins.topicos1.lgc.Municipio.service.MunicipioService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
@@ -28,6 +29,7 @@ public class MunicipioResource {
     MunicipioService service;
 
     @GET
+    @RolesAllowed({"Administrador"})
     public Response buscarTodos() {
         List<MunicipioDTOResponse> lista = service.findAll();
         return Response.ok(lista).build();
@@ -36,12 +38,14 @@ public class MunicipioResource {
     // Adicionado o findById (essencial)
     @GET
     @Path("/{id}")
+    @RolesAllowed({"Administrador"})
     public Response findById(@PathParam("id") Long id) {
         return Response.ok(service.findById(id)).build();
     }
 
     @GET
     @Path("/find/{nome}")
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response buscarPorNome(@PathParam("nome") String nome) { // Corrigido
         List<MunicipioDTOResponse> lista = service.findByNome(nome);
         return Response.ok(lista).build();
@@ -49,6 +53,7 @@ public class MunicipioResource {
 
     @POST
     @Transactional // Adicionado
+    @RolesAllowed({"Administrador"})
     public Response incluir(MunicipioDTO dto) {
         MunicipioDTOResponse retorno = service.create(dto);
         return Response.status(Status.CREATED).entity(retorno).build();
@@ -57,6 +62,7 @@ public class MunicipioResource {
     @PUT
     @Path("/{id}")
     @Transactional // Adicionado
+    @RolesAllowed({"Administrador"})
     public Response alterar(@PathParam("id") Long id, MunicipioDTO dto) { // Corrigido
         MunicipioDTOResponse retorno = service.update(id, dto);
         return Response.ok(retorno).build(); // Retorna o objeto atualizado
@@ -65,6 +71,7 @@ public class MunicipioResource {
     @DELETE
     @Path("/{id}")
     @Transactional // Adicionado
+    @RolesAllowed({"Administrador"})
     public Response apagar(@PathParam("id") Long id) { // Corrigido
         service.delete(id);
         return Response.noContent().build();

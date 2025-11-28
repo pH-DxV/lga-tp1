@@ -5,6 +5,7 @@ import java.util.List;
 import br.unitins.topicos1.lgc.Telefone.dto.TelefoneDTO;
 import br.unitins.topicos1.lgc.Telefone.dto.TelefoneDTOResponse;
 import br.unitins.topicos1.lgc.Telefone.service.TelefoneService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -31,6 +32,7 @@ public class TelefoneResource {
 
     @POST
     @Transactional
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response create(@Valid TelefoneDTO dto) {
         TelefoneDTOResponse response = service.create(dto);
         return Response.status(Status.CREATED).entity(response).build();
@@ -39,6 +41,7 @@ public class TelefoneResource {
     @PUT
     @Path("/{id}")
     @Transactional
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response update(@PathParam("id") Long id, @Valid TelefoneDTO dto) {
         TelefoneDTOResponse response = service.update(id, dto);
         return Response.ok(response).build();
@@ -47,6 +50,7 @@ public class TelefoneResource {
     @DELETE
     @Path("/{id}")
     @Transactional
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response delete(@PathParam("id") Long id) {
         service.delete(id);
         return Response.noContent().build();
@@ -54,11 +58,13 @@ public class TelefoneResource {
 
     @GET
     @Path("/{id}")
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response findById(@PathParam("id") Long id) {
         return Response.ok(service.findById(id)).build();
     }
     
     @GET
+    @RolesAllowed({"Administrador"})
     public Response buscarTodos() {
         List<TelefoneDTOResponse> lista = service.findAll(); 
         return Response.ok(lista).build();
@@ -66,6 +72,7 @@ public class TelefoneResource {
     
     @GET
     @Path("/usuario/{idUsuario}")
+    @RolesAllowed({"Administrador"})
     public Response findByUsuario(@PathParam("idUsuario") Long idUsuario) {
         List<TelefoneDTOResponse> lista = service.findByUsuario(idUsuario); 
         return Response.ok(lista).build();

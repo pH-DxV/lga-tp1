@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 public enum Perfil {
 
     ADM (1L, "Administrador"),
-    USER (2L, "Usuário");
+    USER (2L, "Usuario");
 
     @JsonProperty("id")
     public final Long ID;

@@ -2,6 +2,7 @@ package br.unitins.topicos1.lgc.CategoriaDoCafe.resource;
 
 import br.unitins.topicos1.lgc.CategoriaDoCafe.dto.CategoriaDoCafeDTO;
 import br.unitins.topicos1.lgc.CategoriaDoCafe.service.CategoriaDoCafeService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -25,36 +26,42 @@ public class CategoriaDoCafeResource {
     CategoriaDoCafeService service;
 
     @POST
+    @RolesAllowed({"Administrador"})
     public Response create(@Valid CategoriaDoCafeDTO dto) {
         return Response.status(Status.CREATED).entity(service.create(dto)).build();
     }
 
     @PUT
     @Path("/{id}")
+    @RolesAllowed({"Administrador"})
     public Response update(@PathParam("id") Long id, @Valid CategoriaDoCafeDTO dto) {
         return Response.ok(service.update(id, dto)).build();
     }
 
     @DELETE
     @Path("/{id}")
+    @RolesAllowed({"Administrador"})
     public Response delete(@PathParam("id") Long id) {
         service.delete(id);
         return Response.noContent().build();
     }
 
     @GET
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response findAll() {
         return Response.ok(service.findAll()).build();
     }
 
     @GET
     @Path("/{id}")
+    @RolesAllowed({"Administrador"})
     public Response findById(@PathParam("id") Long id) {
         return Response.ok(service.findById(id)).build();
     }
 
     @GET
     @Path("/search/{nome}")
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response findByNome(@PathParam("nome") String nome) {
         return Response.ok(service.findByNome(nome)).build();
     }

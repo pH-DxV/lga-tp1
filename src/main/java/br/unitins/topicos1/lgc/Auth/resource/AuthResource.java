@@ -5,6 +5,7 @@ import br.unitins.topicos1.lgc.Hash.service.HashService;
 import br.unitins.topicos1.lgc.JwT.service.JwtService;
 import br.unitins.topicos1.lgc.Usuario.model.Usuario;
 import br.unitins.topicos1.lgc.Usuario.service.UsuarioService;
+import jakarta.annotation.security.PermitAll;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -31,6 +32,7 @@ public class AuthResource {
 
     @POST
     @Path("/login")
+    @PermitAll
     public Response login(@Valid AuthDTO dto) {
         
         // 1. Criptografa a senha que chegou para comparar com o banco

@@ -2,6 +2,8 @@ package br.unitins.topicos1.lgc.Cafe.resource;
 
 import br.unitins.topicos1.lgc.Cafe.dto.CafeDTO;
 import br.unitins.topicos1.lgc.Cafe.service.CafeService;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -27,6 +29,7 @@ public class CafeResource {
     CafeService cafeService;
 
     @POST
+    @RolesAllowed("Administrador")
     public Response create(@Valid CafeDTO dto) {
         return Response.status(Status.CREATED).entity(cafeService.create(dto)).build();
     }
@@ -34,6 +37,7 @@ public class CafeResource {
     @PUT
     @Transactional
     @Path("/{id}")
+    @RolesAllowed("Administrador")
     public Response update(@PathParam("id") Long id, @Valid CafeDTO dto) {
         return Response.ok(cafeService.update(id, dto)).build();
     }
@@ -41,30 +45,35 @@ public class CafeResource {
     @DELETE
     @Transactional
     @Path("/{id}")
+    @RolesAllowed("Administrador")
     public Response delete(@PathParam("id") Long id) {
         cafeService.delete(id);
         return Response.noContent().build();
     }
 
     @GET
+    @PermitAll
     public Response findAll() {
         return Response.ok(cafeService.findAll()).build();
     }
 
     @GET
     @Path("/{id}")
+    @RolesAllowed("Administrador")
     public Response findById(@PathParam("id") Long id) {
         return Response.ok(cafeService.findById(id)).build();
     }
 
     @GET
     @Path("/search/nome/{nome}")
+    @PermitAll
     public Response findByNome(@PathParam("nome") String nome) {
         return Response.ok(cafeService.findByNome(nome)).build();
     }
     
     @GET
     @Path("/search/pontuacao")
+    @PermitAll
     public Response findByPontuacao(
             @QueryParam("min") Integer minSCA,
             @QueryParam("max") Integer maxSCA) {

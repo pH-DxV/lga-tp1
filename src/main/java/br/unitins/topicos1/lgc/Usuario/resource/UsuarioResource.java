@@ -5,6 +5,7 @@ import java.util.List;
 import br.unitins.topicos1.lgc.Usuario.dto.UsuarioDTO;
 import br.unitins.topicos1.lgc.Usuario.dto.UsuarioDTOResponse;
 import br.unitins.topicos1.lgc.Usuario.service.UsuarioService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
@@ -28,6 +29,7 @@ public class UsuarioResource {
     UsuarioService service;
 
     @GET
+    @RolesAllowed("Administrador")
     public Response buscarTodos() { // Corrigido
         List<UsuarioDTOResponse> lista = service.findAll();
         return Response.ok(lista).build();
@@ -36,12 +38,14 @@ public class UsuarioResource {
     // Adicionado o findById (essencial)
     @GET
     @Path("/{id}")
+    @RolesAllowed("Administrador")
     public Response findById(@PathParam("id") Long id) {
         return Response.ok(service.findById(id)).build();
     }
 
     @GET
     @Path("/find/{nome}")
+    @RolesAllowed("Administrador")
     public Response buscarPorNome(@PathParam("nome") String nome) { // Corrigido
         List<UsuarioDTOResponse> lista = service.findByNome(nome);
         return Response.ok(lista).build();
@@ -49,6 +53,7 @@ public class UsuarioResource {
 
     @POST
     @Transactional // Adicionado
+    @RolesAllowed("Administrador")
     public Response incluir(UsuarioDTO dto) { // Corrigido
         UsuarioDTOResponse retorno = service.create(dto);
         return Response.status(Status.CREATED).entity(retorno).build();
@@ -57,6 +62,7 @@ public class UsuarioResource {
     @PUT
     @Path("/{id}")
     @Transactional // Adicionado
+    @RolesAllowed("Administrador")
     public Response alterar(@PathParam("id") Long id, UsuarioDTO dto) { // Corrigido
         UsuarioDTOResponse retorno = service.update(id, dto);
         return Response.ok(retorno).build();
@@ -65,6 +71,7 @@ public class UsuarioResource {
     @DELETE
     @Path("/{id}")
     @Transactional // Adicionado
+    @RolesAllowed("Administrador")
     public Response apagar(@PathParam("id") Long id) { // Corrigido
         service.delete(id);
         return Response.noContent().build();

@@ -5,6 +5,7 @@ import java.util.List;
 import br.unitins.topicos1.lgc.Cliente.dto.ClienteDTO;
 import br.unitins.topicos1.lgc.Cliente.dto.ClienteDTOResponse;
 import br.unitins.topicos1.lgc.Cliente.service.ClienteService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -34,6 +35,7 @@ public class ClienteResource {
      */
     @POST
     @Transactional
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response create(@Valid ClienteDTO dto) {
         ClienteDTOResponse response = service.create(dto);
         // Retorna 201 Created com o novo cliente
@@ -47,6 +49,7 @@ public class ClienteResource {
     @PUT
     @Path("/{id}")
     @Transactional
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response update(@PathParam("id") Long id, @Valid ClienteDTO dto) {
         ClienteDTOResponse response = service.update(id, dto);
         // Retorna 200 OK com o objeto atualizado
@@ -59,6 +62,7 @@ public class ClienteResource {
     @DELETE
     @Path("/{id}")
     @Transactional
+    @RolesAllowed({"Administrador"})
     public Response delete(@PathParam("id") Long id) {
         service.delete(id);
         // Retorna 204 No Content
@@ -69,6 +73,7 @@ public class ClienteResource {
      * Lista todos os clientes. (Acesso geralmente restrito a ADM).
      */
     @GET
+    @RolesAllowed({"Administrador"})
     public Response findAll() {
         List<ClienteDTOResponse> lista = service.findAll();
         return Response.ok(lista).build();
@@ -79,6 +84,7 @@ public class ClienteResource {
      */
     @GET
     @Path("/{id}")
+    @RolesAllowed({"Administrador"})
     public Response findById(@PathParam("id") Long id) {
         return Response.ok(service.findById(id)).build();
     }
@@ -88,6 +94,7 @@ public class ClienteResource {
      */
     @GET
     @Path("/search/{nome}")
+    @RolesAllowed({"Administrador"})
     public Response findByNome(@PathParam("nome") String nome) {
         List<ClienteDTOResponse> lista = service.findByNome(nome);
         return Response.ok(lista).build();
