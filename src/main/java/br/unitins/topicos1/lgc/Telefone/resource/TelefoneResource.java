@@ -72,7 +72,7 @@ public class TelefoneResource {
     
     @GET
     @Path("/usuario/{idUsuario}")
-    @RolesAllowed({"Administrador"})
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response findByUsuario(@PathParam("idUsuario") Long idUsuario) {
         List<TelefoneDTOResponse> lista = service.findByUsuario(idUsuario); 
         return Response.ok(lista).build();

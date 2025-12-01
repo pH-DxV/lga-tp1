@@ -5,7 +5,6 @@ import java.util.List;
 import br.unitins.topicos1.lgc.Pedido.dto.PedidoDTO;
 import br.unitins.topicos1.lgc.Pedido.dto.PedidoDTOResponse;
 import br.unitins.topicos1.lgc.Pedido.service.PedidoService;
-import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -30,7 +29,7 @@ public class PedidoResource {
 
     @POST
     @Transactional
-    @Authenticated
+    @RolesAllowed({"Administrador","Usuario"})
     public Response create(@Valid PedidoDTO dto) {
         PedidoDTOResponse response = service.create(dto);
         return Response.status(Status.CREATED).entity(response).build();
@@ -45,7 +44,7 @@ public class PedidoResource {
 
     @GET
     @Path("/{id}")
-    @Authenticated
+    @RolesAllowed({"Administrador","Usuario"})
     public Response findById(@PathParam("id") Long id) {
         return Response.ok(service.findById(id)).build();
     }
