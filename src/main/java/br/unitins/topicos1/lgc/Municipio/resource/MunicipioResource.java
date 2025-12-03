@@ -29,7 +29,7 @@ public class MunicipioResource {
     MunicipioService service;
 
     @GET
-    @RolesAllowed({"Administrador"})
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response buscarTodos() {
         List<MunicipioDTOResponse> lista = service.findAll();
         return Response.ok(lista).build();
@@ -38,7 +38,7 @@ public class MunicipioResource {
     // Adicionado o findById (essencial)
     @GET
     @Path("/{id}")
-    @RolesAllowed({"Administrador"})
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response findById(@PathParam("id") Long id) {
         return Response.ok(service.findById(id)).build();
     }

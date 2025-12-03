@@ -3,6 +3,7 @@ package br.unitins.topicos1.lgc.Estado.resource;
 import br.unitins.topicos1.lgc.Estado.dto.EstadoDTO;
 import br.unitins.topicos1.lgc.Estado.dto.EstadoDTOResponse;
 import br.unitins.topicos1.lgc.Estado.service.EstadoService;
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -27,14 +28,14 @@ public class EstadoResource {
     EstadoService service;
 
     @GET
-    @RolesAllowed({"Administrador"})
+    @PermitAll
     public Response buscarTodos() {
         return Response.ok(service.findAll()).build();
     }
 
     @GET
     @Path("/find/{nome}")
-    @RolesAllowed({"Administrador", "Usuario"})
+    @PermitAll
     public Response buscarPorNome(@PathParam("nome") String nome) { // Corrigido
         // Agora o service.findByNome() retorna List<EstadoDTOResponse>
         return Response.ok(service.findByNome(nome)).build();
@@ -42,7 +43,7 @@ public class EstadoResource {
 
     @GET
     @Path("/{id}")
-    @RolesAllowed({"Administrador"})
+    @PermitAll
     public Response findById(@PathParam("id") Long id) {
         return Response.ok(service.findById(id)).build();
     }

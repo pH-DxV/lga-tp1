@@ -59,7 +59,7 @@ public class CafeResource {
 
     @GET
     @Path("/{id}")
-    @RolesAllowed("Administrador")
+    @PermitAll
     public Response findById(@PathParam("id") Long id) {
         return Response.ok(cafeService.findById(id)).build();
     }

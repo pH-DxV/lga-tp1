@@ -5,6 +5,7 @@ import java.util.List;
 import br.unitins.topicos1.lgc.Endereco.dto.EnderecoDTO;
 import br.unitins.topicos1.lgc.Endereco.dto.EnderecoDTOResponse;
 import br.unitins.topicos1.lgc.Endereco.service.EnderecoService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
@@ -29,6 +30,7 @@ public class EnderecoResource {
 
     @GET
     @Path("/find/cep/{cep}")
+    @RolesAllowed({"Administrador"})
     public Response buscarPorCep(@PathParam("cep") String cep) {
         List<EnderecoDTOResponse> lista = service.findByCep(cep);
         return Response.ok(lista).build();
@@ -36,12 +38,14 @@ public class EnderecoResource {
 
     @GET
     @Path("/find/rua/{rua}")
+    @RolesAllowed({"Administrador"})
     public Response buscarPorRua(@PathParam("rua") String rua) {
         List<EnderecoDTOResponse> lista = service.findByRua(rua);
         return Response.ok(lista).build();
     }
 
     @GET
+    @RolesAllowed({"Administrador"})
     public Response buscarTodos() {
         List<EnderecoDTOResponse> lista = service.findAll();
         return Response.ok(lista).build();
@@ -49,6 +53,7 @@ public class EnderecoResource {
 
     @POST
     @Transactional // Boa prática
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response incluir(EnderecoDTO dto) {
         EnderecoDTOResponse retorno = service.create(dto);
         // Retorna 201 Created com o objeto criado
@@ -58,6 +63,7 @@ public class EnderecoResource {
     @PUT
     @Path("/{id}")
     @Transactional // Obrigatório
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response alterar(@PathParam("id") Long id, EnderecoDTO dto) {
         EnderecoDTOResponse retorno = service.update(id, dto);
         // Retorna 200 OK com o objeto atualizado
@@ -67,6 +73,7 @@ public class EnderecoResource {
     @DELETE
     @Path("/{id}")
     @Transactional // Obrigatório
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response apagar(@PathParam("id") Long id) {
         service.delete(id);
         // Retorna 204 No Content (sucesso sem corpo)

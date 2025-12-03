@@ -5,6 +5,7 @@ import java.util.List;
 import br.unitins.topicos1.lgc.Cliente.dto.ClienteDTO;
 import br.unitins.topicos1.lgc.Cliente.dto.ClienteDTOResponse;
 import br.unitins.topicos1.lgc.Cliente.service.ClienteService;
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -35,7 +36,7 @@ public class ClienteResource {
      */
     @POST
     @Transactional
-    @RolesAllowed({"Administrador", "Usuario"})
+    @PermitAll
     public Response create(@Valid ClienteDTO dto) {
         ClienteDTOResponse response = service.create(dto);
         // Retorna 201 Created com o novo cliente
@@ -62,7 +63,7 @@ public class ClienteResource {
     @DELETE
     @Path("/{id}")
     @Transactional
-    @RolesAllowed({"Administrador"})
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response delete(@PathParam("id") Long id) {
         service.delete(id);
         // Retorna 204 No Content
@@ -84,7 +85,7 @@ public class ClienteResource {
      */
     @GET
     @Path("/{id}")
-    @RolesAllowed({"Administrador"})
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response findById(@PathParam("id") Long id) {
         return Response.ok(service.findById(id)).build();
     }

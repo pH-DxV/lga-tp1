@@ -2,6 +2,7 @@ package br.unitins.topicos1.lgc.CategoriaDoCafe.resource;
 
 import br.unitins.topicos1.lgc.CategoriaDoCafe.dto.CategoriaDoCafeDTO;
 import br.unitins.topicos1.lgc.CategoriaDoCafe.service.CategoriaDoCafeService;
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -54,14 +55,14 @@ public class CategoriaDoCafeResource {
 
     @GET
     @Path("/{id}")
-    @RolesAllowed({"Administrador"})
+    @PermitAll
     public Response findById(@PathParam("id") Long id) {
         return Response.ok(service.findById(id)).build();
     }
 
     @GET
     @Path("/search/{nome}")
-    @RolesAllowed({"Administrador", "Usuario"})
+    @PermitAll
     public Response findByNome(@PathParam("nome") String nome) {
         return Response.ok(service.findByNome(nome)).build();
     }

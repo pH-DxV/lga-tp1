@@ -2,6 +2,7 @@ package br.unitins.topicos1.lgc.Marca.resource;
 
 import br.unitins.topicos1.lgc.Marca.dto.MarcaDTO;
 import br.unitins.topicos1.lgc.Marca.service.MarcaService;
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -50,21 +51,21 @@ public class MarcaResource {
     }
 
     @GET
-    @RolesAllowed({"Administrador"})
+    @PermitAll
     public Response findAll() {
         return Response.ok(marcaService.findAll()).build();
     }
 
     @GET
     @Path("/{id}")
-    @RolesAllowed({"Administrador"})
+    @PermitAll
     public Response findById(@PathParam("id") Long id) {
         return Response.ok(marcaService.findById(id)).build();
     }
 
     @GET
     @Path("/search/{nome}")
-    @RolesAllowed({"Administrador", "Usuario"})
+    @PermitAll
     public Response findByNome(@PathParam("nome") String nome) {
         return Response.ok(marcaService.findByNome(nome)).build();
     }
