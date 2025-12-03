@@ -9,11 +9,18 @@ public class PagamentoDTO {
     @NotNull(message = "O ID do Pedido é obrigatório.")
     private Long idPedido;
 
+    public PagamentoDTO() {
+    }
+
     public PagamentoDTO(Long idPedido) {
         this.idPedido = idPedido;
     }
 
     public Long getIdPedido() {
         return idPedido;
+    }
+
+    public void setIdPedido(Long idPedido) {
+        this.idPedido = idPedido;
     }
 }
