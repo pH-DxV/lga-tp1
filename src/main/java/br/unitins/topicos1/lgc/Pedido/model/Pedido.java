@@ -6,12 +6,16 @@ import java.util.List;
 import br.unitins.topicos1.lgc.DefaultEntity.model.DefaultEntity;
 import br.unitins.topicos1.lgc.Endereco.model.Endereco;
 import br.unitins.topicos1.lgc.ItemPedido.model.ItemPedido;
+import br.unitins.topicos1.lgc.Pagamento.model.Pagamento;
 import br.unitins.topicos1.lgc.Usuario.model.Usuario;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 @Entity
 public class Pedido extends DefaultEntity {
@@ -30,6 +34,12 @@ public class Pedido extends DefaultEntity {
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemPedido> itens;
+
+    @OneToOne(mappedBy = "pedido")
+    private Pagamento pagamento;
+
+    @Enumerated(EnumType.STRING)
+    private PedidoStatus status;
 
     // --- GETTERS E SETTERS ---
 
@@ -71,5 +81,21 @@ public class Pedido extends DefaultEntity {
 
     public void setItens(List<ItemPedido> itens) {
         this.itens = itens;
+    }
+
+    public Pagamento getPagamento() {
+        return pagamento; 
+    }
+
+    public void setPagamento(Pagamento pagamento) {
+        this.pagamento = pagamento; 
+    }
+
+    public PedidoStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PedidoStatus status) {
+        this.status = status;
     }
 }

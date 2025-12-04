@@ -31,6 +31,17 @@ public class PagamentoServiceImpl implements PagamentoService {
     @Inject
     PedidoRepository pedidoRepository;
 
+    private Pedido validarPedido(Long idPedido) {
+        Pedido pedido = pedidoRepository.findById(idPedido);
+        if (pedido == null) {
+            throw new NotFoundException("Pedido não encontrado.");
+        }
+        if (pedido.getTotalPedido() <= 0) {
+            throw new BadRequestException("Valor do pedido inválido.");
+        }
+        return pedido;
+    }
+
     // --- CARTÃO DE CRÉDITO ---
     @Override
     @Transactional
@@ -46,6 +57,8 @@ public class PagamentoServiceImpl implements PagamentoService {
         pagamento.setValor(pedido.getTotalPedido());
         pagamento.setConfirmado(true);
         pagamento.setDataConfirmacao(LocalDateTime.now());
+
+        
         
         pagamento.setNomeTitular(dto.nomeTitular());
         String mascara = "**** **** **** " + dto.numeroCartao().substring(dto.numeroCartao().length() - 4);
@@ -99,15 +112,4 @@ public class PagamentoServiceImpl implements PagamentoService {
         return PagamentoBoletoDTOResponse.valueOf(pagamento);
     }
 
-    // Método auxiliar para validar o pedido e evitar repetição de código
-    private Pedido validarPedido(Long idPedido) {
-        Pedido pedido = pedidoRepository.findById(idPedido);
-        if (pedido == null) {
-            throw new NotFoundException("Pedido não encontrado.");
-        }
-        if (pedido.getTotalPedido() <= 0) {
-            throw new BadRequestException("Valor do pedido inválido.");
-        }
-        return pedido;
-    }
 }
