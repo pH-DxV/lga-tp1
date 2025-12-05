@@ -1,6 +1,7 @@
 package br.unitins.topicos1.lgc.Endereco.model;
 
 import br.unitins.topicos1.lgc.DefaultEntity.model.DefaultEntity;
+import br.unitins.topicos1.lgc.Municipio.model.Municipio;
 import br.unitins.topicos1.lgc.Usuario.model.Usuario;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,54 +11,48 @@ import jakarta.persistence.ManyToOne;
 @Entity
 public class Endereco extends DefaultEntity {
 
-    @Column(length = 8, nullable = false)
+    @Column(nullable = false)
     private String cep;
 
-    @Column(length = 100)
+    @Column(nullable = false)
     private String rua;
 
-    @Column(length = 100)
+    @Column(nullable = false)
+    private String numero;
+
     private String complemento;
+    
+    private String bairro;
 
-    // --- 4. ADICIONAR ESTE BLOCO (A CORREÇÃO) ---
-    // Muitos endereços pertencem a Um Usuário
     @ManyToOne
-    @JoinColumn(name = "id_usuario", nullable = false)
-    private Usuario usuario;
-    // --- FIM DA CORREÇÃO ---
+    @JoinColumn(name = "id_municipio", nullable = false)
+    private Municipio municipio;
 
+    // Relacionamento bidirecional com Usuario
+    @ManyToOne
+    @JoinColumn(name = "id_usuario")
+    private Usuario usuario;
 
     // --- GETTERS E SETTERS ---
-    public String getCep() {
-        return cep;
-    }
 
-    public void setCep(String cep) {
-        this.cep = cep;
-    }
+    public String getCep() { return cep; }
+    public void setCep(String cep) { this.cep = cep; }
 
-    public String getRua() {
-        return rua;
-    }
+    public String getRua() { return rua; }
+    public void setRua(String rua) { this.rua = rua; }
 
-    public void setRua(String rua) {
-        this.rua = rua;
-    }
+    public String getNumero() { return numero; }
+    public void setNumero(String numero) { this.numero = numero; }
 
-    public String getComplemento() {
-        return complemento;
-    }
+    public String getComplemento() { return complemento; }
+    public void setComplemento(String complemento) { this.complemento = complemento; }
 
-    public void setComplemento(String complemento) {
-        this.complemento = complemento;
-    }
+    public String getBairro() { return bairro; }
+    public void setBairro(String bairro) { this.bairro = bairro; }
 
-    // --- GETTER E SETTER PARA O NOVO CAMPO ---
-    public Usuario getUsuario() {
-        return usuario;
-    }
+    public Municipio getMunicipio() { return municipio; }
+    public void setMunicipio(Municipio municipio) { this.municipio = municipio; }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
 }

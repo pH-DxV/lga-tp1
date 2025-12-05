@@ -1,5 +1,7 @@
 package br.unitins.topicos1.lgc.Estado.resource;
 
+//import org.jboss.logging.Logger;
+
 import br.unitins.topicos1.lgc.Estado.dto.EstadoDTO;
 import br.unitins.topicos1.lgc.Estado.dto.EstadoDTOResponse;
 import br.unitins.topicos1.lgc.Estado.service.EstadoService;
@@ -27,9 +29,13 @@ public class EstadoResource {
     @Inject
     EstadoService service;
 
+    //private final static final Logger LOG =
+    //    Logger.getLogger(EstadoResource.class);
+
     @GET
     @PermitAll
     public Response buscarTodos() {
+       // LOG.info("ENTROU NO METODO buscarTodos");
         return Response.ok(service.findAll()).build();
     }
 

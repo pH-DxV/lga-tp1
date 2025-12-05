@@ -15,6 +15,7 @@ import br.unitins.topicos1.lgc.Pagamento.model.PagamentoCartao;
 import br.unitins.topicos1.lgc.Pagamento.model.PagamentoPix;
 import br.unitins.topicos1.lgc.Pagamento.repository.PagamentoRepository;
 import br.unitins.topicos1.lgc.Pedido.model.Pedido;
+import br.unitins.topicos1.lgc.Pedido.model.PedidoStatus;
 import br.unitins.topicos1.lgc.Pedido.repository.PedidoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -31,24 +32,12 @@ public class PagamentoServiceImpl implements PagamentoService {
     @Inject
     PedidoRepository pedidoRepository;
 
-    private Pedido validarPedido(Long idPedido) {
-        Pedido pedido = pedidoRepository.findById(idPedido);
-        if (pedido == null) {
-            throw new NotFoundException("Pedido não encontrado.");
-        }
-        if (pedido.getTotalPedido() <= 0) {
-            throw new BadRequestException("Valor do pedido inválido.");
-        }
-        return pedido;
-    }
-
-    // --- CARTÃO DE CRÉDITO ---
     @Override
     @Transactional
     public PagamentoCartaoDTOResponse pagarCartao(PagamentoCartaoDTO dto) {
         Pedido pedido = validarPedido(dto.idPedido());
 
-        if (dto.cvv().equals("000")) { 
+        if ("000".equals(dto.cvv())) { 
              throw new BadRequestException("Pagamento recusado pela operadora.");
         }
 
@@ -57,11 +46,14 @@ public class PagamentoServiceImpl implements PagamentoService {
         pagamento.setValor(pedido.getTotalPedido());
         pagamento.setConfirmado(true);
         pagamento.setDataConfirmacao(LocalDateTime.now());
-
         
+        // Atualiza status do pedido para PAGO
+        pedido.setPagamento(pagamento);
+        pedido.setStatus(PedidoStatus.PAGO);
         
         pagamento.setNomeTitular(dto.nomeTitular());
-        String mascara = "**** **** **** " + dto.numeroCartao().substring(dto.numeroCartao().length() - 4);
+        String num = dto.numeroCartao();
+        String mascara = "**** **** **** " + num.substring(num.length() - 4);
         pagamento.setNumeroCartao(mascara); 
         pagamento.setBandeira(dto.bandeira());
         
@@ -70,7 +62,6 @@ public class PagamentoServiceImpl implements PagamentoService {
         return PagamentoCartaoDTOResponse.valueOf(pagamento);
     }
 
-    // --- PIX ---
     @Override
     @Transactional
     public PagamentoPixDTOResponse pagarPix(PagamentoPixDTO dto) {
@@ -79,19 +70,20 @@ public class PagamentoServiceImpl implements PagamentoService {
         PagamentoPix pagamento = new PagamentoPix();
         pagamento.setPedido(pedido);
         pagamento.setValor(pedido.getTotalPedido());
-        pagamento.setConfirmado(false); // Pix começa como pendente
-        pagamento.setDataConfirmacao(null);
+        pagamento.setConfirmado(false);
         
-        // Gera chave aleatória simulando o "Copia e Cola"
+        // Mantém ou define explicitamente como AGUARDANDO (se já não estiver)
+        pedido.setPagamento(pagamento);
+        // pedido.setStatus(PedidoStatus.AGUARDANDO_PAGAMENTO); // Já nasce assim, mas reforça
+        
         pagamento.setChavePixDestino(UUID.randomUUID().toString());
-        pagamento.setDataExpiracaoToken(LocalDateTime.now().plusMinutes(30)); // Expira em 30 min
+        pagamento.setDataExpiracaoToken(LocalDateTime.now().plusMinutes(30));
 
         pagamentoRepository.persist(pagamento);
 
         return PagamentoPixDTOResponse.valueOf(pagamento);
     }
 
-    // --- BOLETO ---
     @Override
     @Transactional
     public PagamentoBoletoDTOResponse pagarBoleto(PagamentoBoletoDTO dto) {
@@ -100,16 +92,33 @@ public class PagamentoServiceImpl implements PagamentoService {
         PagamentoBoleto pagamento = new PagamentoBoleto();
         pagamento.setPedido(pedido);
         pagamento.setValor(pedido.getTotalPedido());
-        pagamento.setConfirmado(false); // Boleto começa como pendente
-        pagamento.setDataConfirmacao(null);
+        pagamento.setConfirmado(false);
 
-        // Gera código de barras simulado
+        pedido.setPagamento(pagamento);
+        // pedido.setStatus(PedidoStatus.AGUARDANDO_PAGAMENTO);
+
         pagamento.setCodigoBarras("34191.79001 01043.510047 91020.150008 8 " + System.currentTimeMillis());
-        pagamento.setDataVencimento(LocalDate.now().plusDays(3)); // Vence em 3 dias
+        pagamento.setDataVencimento(LocalDate.now().plusDays(3));
 
         pagamentoRepository.persist(pagamento);
 
         return PagamentoBoletoDTOResponse.valueOf(pagamento);
     }
 
+    private Pedido validarPedido(Long idPedido) {
+        Pedido pedido = pedidoRepository.findById(idPedido);
+        if (pedido == null) {
+            throw new NotFoundException("Pedido não encontrado.");
+        }
+        if (pedido.getTotalPedido() <= 0) {
+            throw new BadRequestException("Valor do pedido inválido.");
+        }
+        if (pedido.getStatus() == PedidoStatus.PAGO 
+            || pedido.getStatus() == PedidoStatus.CANCELADO 
+            || pedido.getStatus() == PedidoStatus.ENVIADO 
+            || pedido.getStatus() == PedidoStatus.ENTREGUE) {
+            throw new BadRequestException("Este pedido não pode ser pago (Status: " + pedido.getStatus().getLabel() + ")");
+        }
+        return pedido;
+    }
 }

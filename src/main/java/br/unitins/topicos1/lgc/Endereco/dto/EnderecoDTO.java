@@ -1,20 +1,25 @@
 package br.unitins.topicos1.lgc.Endereco.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull; // Importe o NotNull
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 
 public record EnderecoDTO(
-    @NotBlank(message = "O CEP não pode ser nulo.")
-    @Size(min = 8, max = 8, message = "O CEP deve ter 8 caracteres.")
+    @NotBlank(message = "O CEP é obrigatório.")
     String cep,
 
-    @NotBlank(message = "A rua não pode ser nula.")
+    @NotBlank(message = "A rua é obrigatória.")
     String rua,
 
-    String complemento,
+    @NotBlank(message = "O número é obrigatório.")
+    String numero,
 
-    // --- ADICIONE ESTE CAMPO ---
+    String complemento,
+    
+    String bairro,
+
+    @NotNull(message = "O município é obrigatório.")
+    Long idMunicipio,
+    
     @NotNull(message = "O ID do usuário é obrigatório.")
     Long idUsuario
 ) {}

@@ -1,78 +1,95 @@
 -- ============================================================================
--- ESTADOS (Regiao: 1=Centro-Oeste, 2=Nordeste, 3=Norte, 4=Sudeste, 5=Sul)
+-- 1. DADOS GEOGRÁFICOS (Estado e Município)
 -- ============================================================================
 INSERT INTO estado (nome, sigla, regiao) VALUES ('Tocantins', 'TO', 3); -- ID 1
 INSERT INTO estado (nome, sigla, regiao) VALUES ('Goiás', 'GO', 1);     -- ID 2
 INSERT INTO estado (nome, sigla, regiao) VALUES ('Minas Gerais', 'MG', 4); -- ID 3
 INSERT INTO estado (nome, sigla, regiao) VALUES ('São Paulo', 'SP', 4);    -- ID 4
 
--- ============================================================================
--- MUNICIPIOS
--- ============================================================================
 INSERT INTO municipio (nome, id_estado) VALUES ('Palmas', 1);    -- ID 1
 INSERT INTO municipio (nome, id_estado) VALUES ('Paraíso', 1);   -- ID 2
 INSERT INTO municipio (nome, id_estado) VALUES ('Goiânia', 2);   -- ID 3
-INSERT INTO municipio (nome, id_estado) VALUES ('Varginha', 3);  -- ID 4 (Terra do café!)
+INSERT INTO municipio (nome, id_estado) VALUES ('Varginha', 3);  -- ID 4
 
 -- ============================================================================
--- USUÁRIOS
--- Perfil é salvo na tabela auxiliar usuario_perfil (1=Admin, 2=User)
+-- 2. USUÁRIOS E CLIENTES (Herança JOINED)
+-- Senha Hash: KUtBD9kIl87mEJ9A9ykmmWdNdO5AARI95nCklB5rpjrGkb7LVoqBwrpHiYiaMh+yyBfnfYR+G1gJecdm8A85rw==
 -- ============================================================================
 
--- Admin (Senha 123456)
+-- 2.1 ADMIN (Apenas na tabela Usuario)
 INSERT INTO usuario (nome, cpf, login, senha, dataNascimento, peso) 
 VALUES ('Raphael Admin', '11111111111', 'raphael', 'KUtBD9kIl87mEJ9A9ykmmWdNdO5AARI95nCklB5rpjrGkb7LVoqBwrpHiYiaMh+yyBfnfYR+G1gJecdm8A85rw==', '2000-01-01', 75.0);
+-- Perfil 1 (ADM) - Tabela auxiliar do @ElementCollection
+INSERT INTO usuario_perfil (id_usuario, id_perfil) VALUES (1, 1);
 
--- Cliente Comum (Senha 123456)
+-- 2.2 CLIENTE (Tabela Usuario + Tabela Cliente)
 INSERT INTO usuario (nome, cpf, login, senha, dataNascimento, peso) 
 VALUES ('João Cliente', '22222222222', 'joao', 'KUtBD9kIl87mEJ9A9ykmmWdNdO5AARI95nCklB5rpjrGkb7LVoqBwrpHiYiaMh+yyBfnfYR+G1gJecdm8A85rw==', '1995-05-20', 80.0);
-
--- Definindo os perfis (Tabela auxiliar gerada pelo @ElementCollection)
--- Usuario 1 é ADMIN (1)
-INSERT INTO usuario_perfil (id_usuario, id_perfil) VALUES (1, 1);
--- Usuario 2 é USER (2)
+-- Inserção obrigatória na tabela filha para efetivar a herança
+INSERT INTO cliente (id) VALUES (2);
+-- Perfil 2 (USER)
 INSERT INTO usuario_perfil (id_usuario, id_perfil) VALUES (2, 2);
 
 -- ============================================================================
--- TELEFONES E ENDEREÇOS
+-- 3. CONTATOS E ENDEREÇOS (Vinculados ao Usuário)
 -- ============================================================================
-INSERT INTO telefone (ddd, numero, id_usuario) VALUES ('63', '999991234', 1);
-INSERT INTO endereco (cep, rua, complemento, id_usuario) VALUES ('77000000', 'Rua dos Cafés', 'Qd 10 Lt 1', 1);
+INSERT INTO telefone (ddd, numero, id_usuario) VALUES ('63', '999991234', 2);
+
+-- Endereço agora tem vínculo com Municipio e Usuário, além de novos campos
+INSERT INTO endereco (cep, rua, numero, complemento, bairro, id_municipio, id_usuario) 
+VALUES ('77000000', 'Rua dos Cafés', '10', 'Qd 10 Lt 1', 'Centro', 1, 2);
 
 -- ============================================================================
--- DADOS DE PRODUTO (Marca e Categoria)
+-- 4. CATÁLOGO DE PRODUTOS (Marca, Categoria, Café)
 -- ============================================================================
-INSERT INTO marca (nome, descricao) VALUES ('3 Corações', 'Marca tradicional brasileira.'); -- ID 1
-INSERT INTO marca (nome, descricao) VALUES ('Orfeu', 'Cafés especiais de alta qualidade.'); -- ID 2
-INSERT INTO marca (nome, descricao) VALUES ('Starbucks', 'Marca internacional.'); -- ID 3
+INSERT INTO marca (nome, descricao) VALUES ('3 Corações', 'Tradicional.'); -- ID 1
+INSERT INTO marca (nome, descricao) VALUES ('Orfeu', 'Especial.'); -- ID 2
 
-INSERT INTO categoriadocafe (nome, descricao) VALUES ('Tradicional', 'Para o dia a dia.'); -- ID 1
-INSERT INTO categoriadocafe (nome, descricao) VALUES ('Especial', 'Acima de 80 pontos SCA.'); -- ID 2
-INSERT INTO categoriadocafe (nome, descricao) VALUES ('Gourmet', 'Alta qualidade sem defeitos.'); -- ID 3
+INSERT INTO categoriadocafe (nome, descricao) VALUES ('Tradicional', 'Dia a dia.'); -- ID 1
+INSERT INTO categoriadocafe (nome, descricao) VALUES ('Especial', 'Alta pontuação.'); -- ID 2
 
--- ============================================================================
--- CAFÉS (PRODUTOS)
--- NivelTorra: 1=Clara, 2=Media-Clara, 3=Media, 4=Media-Escura, 5=Escura
--- Tratamento: 1=Natural, 2=Lavado, 3=Honey...
--- ============================================================================
+-- Café 1: Orfeu (Sem estoque aqui, pois separamos a entidade)
+-- Atenção aos Enums salvos como STRING
+INSERT INTO cafe (nome, descricao, pontuacao_sca, preco, peso, id_marca, id_categoria_cafe, nivelDeTorra, tratamento)
+VALUES ('Orfeu Clássico', 'Equilibrado.', 84, 45.90, 250.0, 2, 2, 'MEDIA', 'NATURAL'); -- ID 1
 
--- Café 1: Orfeu Clássico
-INSERT INTO cafe (nome, descricao, pontuacao_sca, preco, peso, estoque, id_marca, id_categoria_cafe, nivelDeTorra, tratamento)
-VALUES ('Orfeu Clássico', 'Equilibrado e aveludado.', 84, 45.90, 250.0, 100, 2, 2, 3, 1);
+-- Café 2: Mogiana
+INSERT INTO cafe (nome, descricao, pontuacao_sca, preco, peso, id_marca, id_categoria_cafe, nivelDeTorra, tratamento)
+VALUES ('Mogiana Paulista', 'Doce.', 82, 25.50, 250.0, 1, 1, 'MEDIA_ESCURA', 'LAVADO'); -- ID 2
 
--- Café 2: 3 Corações Mogiana
-INSERT INTO cafe (nome, descricao, pontuacao_sca, preco, peso, estoque, id_marca, id_categoria_cafe, nivelDeTorra, tratamento)
-VALUES ('Mogiana Paulista', 'Doçura intensa e notas de amêndoas.', 82, 25.50, 250.0, 200, 1, 3, 4, 1);
-
--- ============================================================================
--- NOTAS SENSORIAIS DOS CAFÉS
--- Tabela auxiliar gerada pelo @ElementCollection
--- ============================================================================
-
--- Notas do Café 1 (Orfeu): Caramelo e Frutas Secas (Exemplo)
+-- Notas Sensoriais (Tabela auxiliar do @ElementCollection)
 INSERT INTO cafe_notasensorial (id_cafe, nota_sensorial) VALUES (1, 'CARAMELO');
-INSERT INTO cafe_notasensorial (id_cafe, nota_sensorial) VALUES (1, 'CASTANHA_DO_PARA');
-
--- Notas do Café 2 (Mogiana): Chocolate e Nozes
+INSERT INTO cafe_notasensorial (id_cafe, nota_sensorial) VALUES (1, 'NOZ');
 INSERT INTO cafe_notasensorial (id_cafe, nota_sensorial) VALUES (2, 'CHOCOLATE_AO_LEITE');
 INSERT INTO cafe_notasensorial (id_cafe, nota_sensorial) VALUES (2, 'AMENDOAS');
+
+-- ============================================================================
+-- 5. ESTOQUE (Entidade Separada)
+-- ============================================================================
+INSERT INTO estoque (id_cafe, quantidade, dataUltimaMovimentacao) VALUES (1, 100, NOW());
+INSERT INTO estoque (id_cafe, quantidade, dataUltimaMovimentacao) VALUES (2, 50, NOW());
+
+-- ============================================================================
+-- 6. PEDIDOS E ITENS
+-- ============================================================================
+
+-- Pedido 1: Realizado pelo João (ID 2), Status PAGO, com Frete calculado
+INSERT INTO pedido (dataHora, totalPedido, valorFrete, status, id_usuario, id_endereco_entrega)
+VALUES (NOW(), 91.80, 0.0, 'PAGO', 2, 1); -- Total = (45.90 * 2) + 0 frete
+
+-- Itens do Pedido 1 (2 unidades do Café Orfeu)
+INSERT INTO itempedido (precoUnitario, quantidade, id_cafe, id_pedido)
+VALUES (45.90, 2, 1, 1);
+
+-- ============================================================================
+-- 7. PAGAMENTO (Polimorfismo JOINED)
+-- ============================================================================
+
+-- Pagamento do Pedido 1 (Cartão de Crédito)
+-- 1. Insere na tabela pai PAGAMENTO
+INSERT INTO pagamento (valor, confirmado, dataConfirmacao, id_pedido)
+VALUES (91.80, true, NOW(), 1); -- ID do pagamento será 1
+
+-- 2. Insere na tabela filha PAGAMENTOCARTAO (usando o mesmo ID 1)
+INSERT INTO pagamentocartao (id, nomeTitular, numeroCartao, bandeira)
+VALUES (1, 'JOAO CLIENTE', '**** **** **** 1234', 'VISA');

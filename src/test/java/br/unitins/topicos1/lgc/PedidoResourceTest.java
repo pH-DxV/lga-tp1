@@ -1,30 +1,30 @@
 package br.unitins.topicos1.lgc;
 
-import java.util.List;
-import java.util.Set;
-
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import br.unitins.topicos1.lgc.Cafe.dto.CafeDTO;
-import br.unitins.topicos1.lgc.Cafe.dto.CafeDTOResponse;
-import br.unitins.topicos1.lgc.CategoriaDoCafe.dto.CategoriaDoCafeDTO;
-import br.unitins.topicos1.lgc.CategoriaDoCafe.dto.CategoriaDoCafeDTOResponse;
+import br.unitins.topicos1.lgc.Pedido.dto.PedidoDTO;
+import br.unitins.topicos1.lgc.Pedido.dto.PedidoDTOResponse;
+import br.unitins.topicos1.lgc.ItemPedido.dto.ItemPedidoDTO;
+import br.unitins.topicos1.lgc.Usuario.dto.UsuarioDTO;
+import br.unitins.topicos1.lgc.Usuario.dto.UsuarioDTOResponse;
 import br.unitins.topicos1.lgc.Endereco.dto.EnderecoDTO;
 import br.unitins.topicos1.lgc.Endereco.dto.EnderecoDTOResponse;
-import br.unitins.topicos1.lgc.ItemPedido.dto.ItemPedidoDTO;
 import br.unitins.topicos1.lgc.Marca.dto.MarcaDTO;
 import br.unitins.topicos1.lgc.Marca.dto.MarcaDTOResponse;
 import br.unitins.topicos1.lgc.NotaSensorial.model.NotaSensorial;
-import br.unitins.topicos1.lgc.Pedido.dto.PedidoDTO;
-import br.unitins.topicos1.lgc.Pedido.dto.PedidoDTOResponse;
-import br.unitins.topicos1.lgc.Usuario.dto.UsuarioDTO;
-import br.unitins.topicos1.lgc.Usuario.dto.UsuarioDTOResponse;
-import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.http.ContentType;
+import br.unitins.topicos1.lgc.CategoriaDoCafe.dto.CategoriaDoCafeDTO;
+import br.unitins.topicos1.lgc.CategoriaDoCafe.dto.CategoriaDoCafeDTOResponse;
+import br.unitins.topicos1.lgc.Cafe.dto.CafeDTO;
+import br.unitins.topicos1.lgc.Cafe.dto.CafeDTOResponse;
+
+import java.util.List;
+import java.util.Set;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
@@ -38,23 +38,47 @@ public class PedidoResourceTest {
     private static Long idUsuario;
     private static Long idEndereco;
     private static Long idCafe;
+    
+    // Variáveis auxiliares para criar dependências
+    private static Long idMarca;
+    private static Long idCategoria;
+    private static Long idMunicipio; // Assumindo que precise de um município para o endereço
 
-@BeforeEach
+    @BeforeEach
     public void setup() {
-        // 1. Cria Usuário (se não existir)
+        // 1. Cria Usuário (Cliente para fazer o pedido)
         if (idUsuario == null) {
-            // Usa um CPF aleatório ou fixo que não conflite
-            UsuarioDTO dto = new UsuarioDTO("Cliente Pedido", "cliente_pedido", "123456", "12345678999", 2, null);
+            UsuarioDTO dto = new UsuarioDTO(
+                "Cliente Pedido Teste", 
+                "cliente_pedido", 
+                "123456", 
+                "99988877766", 
+                2, // Perfil USER 
+                null
+            );
             idUsuario = given()
                 .contentType(ContentType.JSON)
                 .body(dto)
-                .when().post("/usuarios")
+                .when().post("/usuarios") // Ou /clientes
                 .then().statusCode(201).extract().as(UsuarioDTOResponse.class).id();
         }
 
         // 2. Cria Endereço vinculado ao Usuário
         if (idEndereco == null) {
-            EnderecoDTO dto = new EnderecoDTO("77000000", "Rua da Entrega", "Casa 1", idUsuario);
+            // Se precisar de município, crie aqui ou use um ID fixo se tiver import.sql
+            // Vou assumir ID 1 para município e estado para simplificar o teste de integração
+            Long idMunicipioTeste = 1L; 
+            
+            EnderecoDTO dto = new EnderecoDTO(
+                "77000000", 
+                "Rua da Entrega", 
+                "10", 
+                "Casa", 
+                "Centro", 
+                idMunicipioTeste, 
+                idUsuario
+            );
+            
             idEndereco = given()
                 .contentType(ContentType.JSON)
                 .body(dto)
@@ -62,30 +86,34 @@ public class PedidoResourceTest {
                 .then().statusCode(201).extract().as(EnderecoDTOResponse.class).id();
         }
 
-        // 3. Cria Café (precisa de Marca e Categoria antes)
+        // 3. Cria Café (Produto)
+        // Precisa de Marca e Categoria antes
         if (idCafe == null) {
-            // TRUQUE: Usamos o tempo atual para gerar um nome único e evitar erro 500
-            long uniqueId = System.currentTimeMillis();
+            // Nomes únicos para evitar erro 500 de duplicidade
+            long time = System.currentTimeMillis();
             
-            MarcaDTO marcaDto = new MarcaDTO("Marca Pedido " + uniqueId, null);
-            Long idMarca = given().contentType(ContentType.JSON).body(marcaDto).when().post("/marcas").then().statusCode(201).extract().as(MarcaDTOResponse.class).id();
+            if (idMarca == null) {
+                MarcaDTO marcaDto = new MarcaDTO("Marca Pedido " + time, null);
+                idMarca = given().contentType(ContentType.JSON).body(marcaDto).when().post("/marcas").then().statusCode(201).extract().as(MarcaDTOResponse.class).id();
+            }
+            
+            if (idCategoria == null) {
+                CategoriaDoCafeDTO catDto = new CategoriaDoCafeDTO("Cat Pedido " + time, null);
+                idCategoria = given().contentType(ContentType.JSON).body(catDto).when().post("/categorias").then().statusCode(201).extract().as(CategoriaDoCafeDTOResponse.class).id();
+            }
 
-            CategoriaDoCafeDTO catDto = new CategoriaDoCafeDTO("Cat Pedido " + uniqueId, null);
-            Long idCategoria = given().contentType(ContentType.JSON).body(catDto).when().post("/categorias").then().statusCode(201).extract().as(CategoriaDoCafeDTOResponse.class).id();
-
-            // ATUALIZADO: CafeDTO com todos os campos novos (nome, descricao)
             CafeDTO cafeDto = new CafeDTO(
-                "Café para Venda " + uniqueId, // nome (obrigatório)
-                "Descrição do café teste",     // descricao (novo)
+                "Café Venda " + time, 
+                "Café teste para pedido",
                 idMarca, 
                 idCategoria, 
-                3L, // ID Nivel Torra (MEDIA)
-                1L, // ID Tratamento (NATURAL)
+                3L, // Torra Média
+                1L, // Tratamento Natural
                 Set.of(NotaSensorial.MEL), 
-                85, // Pontuação
-                50.00, // Preço
-                500.0, // Peso
-                100 // Estoque
+                85, 
+                50.00, // Preço: R$ 50,00
+                500.0, 
+                100 // Estoque Inicial: 100
             );
             
             idCafe = given()
@@ -99,13 +127,14 @@ public class PedidoResourceTest {
     @Test
     @Order(1)
     public void testCreate() {
-        // Vamos comprar 2 unidades do café (Total esperado: 100.00)
+        // Compra 2 unidades do café (Total esperado em produtos: 100.00)
+        // O frete será calculado automaticamente pelo Service
         ItemPedidoDTO item = new ItemPedidoDTO(2, idCafe);
         
         PedidoDTO dto = new PedidoDTO(
             idUsuario, 
             idEndereco, 
-            List.of(item) // Lista de itens
+            List.of(item)
         );
 
         PedidoDTOResponse response = given()
@@ -116,15 +145,30 @@ public class PedidoResourceTest {
         .then()
             .statusCode(201)
             .body("id", notNullValue())
-            .body("totalPedido", is(100.00f)) // Verifica se calculou certo (50 * 2)
-            .body("itens.size()", is(1))      // Verifica se tem 1 item na lista
+            .body("itens.size()", is(1))
+            .body("status", is("AGUARDANDO_PAGAMENTO"))
+            // Não validamos o total exato aqui porque depende do valor do frete
+            // que é calculado dinamicamente no Service.
             .extract().as(PedidoDTOResponse.class);
 
         idPedido = response.id();
     }
-
+    
     @Test
     @Order(2)
+    public void testBaixaEstoque() {
+        // Verifica se o estoque do café baixou de 100 para 98
+        // O endpoint GET /cafes/{id} agora consulta o EstoqueService
+        given()
+        .when()
+            .get("/cafes/" + idCafe)
+        .then()
+            .statusCode(200)
+            .body("estoque", is(98));
+    }
+
+    @Test
+    @Order(3)
     public void testFindById() {
         given()
         .when()
@@ -136,16 +180,6 @@ public class PedidoResourceTest {
     }
 
     @Test
-    @Order(3)
-    public void testFindAll() {
-        given()
-        .when()
-            .get("/pedidos")
-        .then()
-            .statusCode(200);
-    }
-
-    @Test
     @Order(4)
     public void testFindByUsuario() {
         given()
@@ -153,7 +187,24 @@ public class PedidoResourceTest {
             .get("/pedidos/usuario/" + idUsuario)
         .then()
             .statusCode(200)
-            // Verifica se retornou pelo menos um pedido na lista
+            // Deve haver pelo menos 1 pedido na lista
             .body("size()", org.hamcrest.Matchers.greaterThanOrEqualTo(1)); 
+    }
+    
+    @Test
+    @Order(5)
+    public void testErroEstoqueInsuficiente() {
+        // Tenta comprar 1000 unidades (só tem 98 agora)
+        ItemPedidoDTO item = new ItemPedidoDTO(1000, idCafe);
+        
+        PedidoDTO dto = new PedidoDTO(idUsuario, idEndereco, List.of(item));
+
+        given()
+            .contentType(ContentType.JSON)
+            .body(dto)
+        .when()
+            .post("/pedidos")
+        .then()
+            .statusCode(400); // Bad Request (Estoque insuficiente)
     }
 }

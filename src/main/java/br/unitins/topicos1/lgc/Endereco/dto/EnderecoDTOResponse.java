@@ -1,20 +1,26 @@
 package br.unitins.topicos1.lgc.Endereco.dto;
 
 import br.unitins.topicos1.lgc.Endereco.model.Endereco;
+import br.unitins.topicos1.lgc.Municipio.dto.MunicipioDTOResponse;
 
 public record EnderecoDTOResponse(
     Long id,
     String cep,
     String rua,
-    String complemento
+    String numero,
+    String complemento,
+    String bairro,
+    MunicipioDTOResponse municipio
 ) {
-    // O método 'valueOf' que faz a conversão
-    public static EnderecoDTOResponse valueOf(Endereco endereco) {
+    public static EnderecoDTOResponse valueOf(Endereco e) {
         return new EnderecoDTOResponse(
-            endereco.getId(),
-            endereco.getCep(),
-            endereco.getRua(),
-            endereco.getComplemento()
+            e.getId(),
+            e.getCep(),
+            e.getRua(),
+            e.getNumero(),
+            e.getComplemento(),
+            e.getBairro(),
+            MunicipioDTOResponse.valueOf(e.getMunicipio())
         );
     }
 }

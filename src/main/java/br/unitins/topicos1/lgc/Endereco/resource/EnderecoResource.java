@@ -28,9 +28,56 @@ public class EnderecoResource {
     @Inject
     EnderecoService service;
 
+    // --- GESTÃO PESSOAL (Cliente gerencia seus dados) ---
+
+    @POST
+    @Transactional
+    @RolesAllowed({"Usuario", "Administrador"}) // Cliente adiciona endereço
+    public Response incluir(EnderecoDTO dto) {
+        // O Service deve validar se o ID do usuário no DTO é o mesmo do token
+        EnderecoDTOResponse retorno = service.create(dto);
+        return Response.status(Status.CREATED).entity(retorno).build();
+    }
+
+    @PUT
+    @Path("/{id}")
+    @Transactional
+    @RolesAllowed({"Usuario", "Administrador"}) // Cliente corrige endereço
+    public Response alterar(@PathParam("id") Long id, EnderecoDTO dto) {
+        // O Service deve validar se o endereço pertence ao usuário do token
+        EnderecoDTOResponse retorno = service.update(id, dto);
+        return Response.ok(retorno).build();
+    }
+
+    @DELETE
+    @Path("/{id}")
+    @Transactional
+    @RolesAllowed({"Usuario", "Administrador"}) // Cliente remove endereço antigo
+    public Response apagar(@PathParam("id") Long id) {
+        // O Service deve validar se o endereço pertence ao usuário do token
+        service.delete(id);
+        return Response.noContent().build();
+    }
+
+    @GET
+    @Path("/{id}")
+    @RolesAllowed({"Usuario", "Administrador"}) // Cliente vê detalhes para editar
+    public Response findById(@PathParam("id") Long id) {
+        return Response.ok(service.findById(id)).build();
+    }
+
+    // --- GESTÃO ADMINISTRATIVA & CONSULTAS ESPECÍFICAS ---
+
+    @GET
+    @RolesAllowed({"Administrador"}) // Lista completa é restrita
+    public Response buscarTodos() {
+        List<EnderecoDTOResponse> lista = service.findAll();
+        return Response.ok(lista).build();
+    }
+
     @GET
     @Path("/find/cep/{cep}")
-    @RolesAllowed({"Administrador"})
+    @RolesAllowed({"Administrador"}) // Busca técnica, geralmente uso interno
     public Response buscarPorCep(@PathParam("cep") String cep) {
         List<EnderecoDTOResponse> lista = service.findByCep(cep);
         return Response.ok(lista).build();
@@ -38,45 +85,20 @@ public class EnderecoResource {
 
     @GET
     @Path("/find/rua/{rua}")
-    @RolesAllowed({"Administrador"})
+    @RolesAllowed({"Administrador"}) // Busca técnica
     public Response buscarPorRua(@PathParam("rua") String rua) {
         List<EnderecoDTOResponse> lista = service.findByRua(rua);
         return Response.ok(lista).build();
     }
-
+    
+    // SUGESTÃO: Endpoint essencial para o front-end "Meus Endereços"
+    /*
     @GET
-    @RolesAllowed({"Administrador"})
-    public Response buscarTodos() {
-        List<EnderecoDTOResponse> lista = service.findAll();
-        return Response.ok(lista).build();
+    @Path("/usuario/{idUsuario}")
+    @RolesAllowed({"Usuario", "Administrador"})
+    public Response buscarPorUsuario(@PathParam("idUsuario") Long idUsuario) {
+        // Validar token vs idUsuario
+        return Response.ok(service.findByUsuario(idUsuario)).build();
     }
-
-    @POST
-    @Transactional // Boa prática
-    @RolesAllowed({"Administrador", "Usuario"})
-    public Response incluir(EnderecoDTO dto) {
-        EnderecoDTOResponse retorno = service.create(dto);
-        // Retorna 201 Created com o objeto criado
-        return Response.status(Status.CREATED).entity(retorno).build(); 
-    }
-
-    @PUT
-    @Path("/{id}")
-    @Transactional // Obrigatório
-    @RolesAllowed({"Administrador", "Usuario"})
-    public Response alterar(@PathParam("id") Long id, EnderecoDTO dto) {
-        EnderecoDTOResponse retorno = service.update(id, dto);
-        // Retorna 200 OK com o objeto atualizado
-        return Response.ok(retorno).build();
-    }
-
-    @DELETE
-    @Path("/{id}")
-    @Transactional // Obrigatório
-    @RolesAllowed({"Administrador", "Usuario"})
-    public Response apagar(@PathParam("id") Long id) {
-        service.delete(id);
-        // Retorna 204 No Content (sucesso sem corpo)
-        return Response.noContent().build();
-    }
+    */
 }

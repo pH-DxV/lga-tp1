@@ -22,9 +22,11 @@ public record CafeDTOResponse(
     Integer pontuacaoSCA,
     Double preco,
     Double peso,
-    Integer estoque
+    Integer estoque // O campo que será exibido no JSON
 ) {
-    public static CafeDTOResponse valueOf(Cafe cafe) {
+    
+    // --- ESTE É O MÉTODO QUE FALTA E VAI CORRIGIR O ERRO ---
+    public static CafeDTOResponse valueOf(Cafe cafe, Integer saldoEstoque) {
         return new CafeDTOResponse(
             cafe.getId(),
             cafe.getNome(),
@@ -38,7 +40,12 @@ public record CafeDTOResponse(
             cafe.getPontuacaoSCA(),
             cafe.getPreco(),
             cafe.getPeso(),
-            cafe.getEstoque()
+            saldoEstoque // Aqui usamos o Integer que vem do Service
         );
+    }
+
+    // Método de conveniência (opcional, para manter compatibilidade se necessário)
+    public static CafeDTOResponse valueOf(Cafe cafe) {
+        return valueOf(cafe, 0); 
     }
 }

@@ -7,6 +7,8 @@ import br.unitins.topicos1.lgc.Endereco.dto.EnderecoDTO;
 import br.unitins.topicos1.lgc.Endereco.dto.EnderecoDTOResponse;
 import br.unitins.topicos1.lgc.Endereco.model.Endereco;
 import br.unitins.topicos1.lgc.Endereco.repository.EnderecoRepository;
+import br.unitins.topicos1.lgc.Municipio.model.Municipio;
+import br.unitins.topicos1.lgc.Municipio.repository.MunicipioRepository;
 import br.unitins.topicos1.lgc.Usuario.model.Usuario;
 import br.unitins.topicos1.lgc.Usuario.repository.UsuarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,48 +23,31 @@ public class EnderecoServiceImpl implements EnderecoService {
     EnderecoRepository repository;
 
     @Inject
-    UsuarioRepository usuarioRepository;
-
-    @Override
-    public List<EnderecoDTOResponse> findAll() {
-        return repository.listAll().stream()
-                .map(e -> EnderecoDTOResponse.valueOf(e)) // Converte Model para DTO
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<EnderecoDTOResponse> findByCep(String cep) {
-        return repository.findByCep(cep).stream() // Supondo que findByCep retorne List<Endereco>
-                .map(EnderecoDTOResponse::valueOf) // Converte Model para DTO
-                .collect(Collectors.toList());
-    }
+    MunicipioRepository municipioRepository;
     
-    @Override
-    public List<EnderecoDTOResponse> findByRua(String rua) {
-        return repository.findByRua(rua).stream() // Supondo que findByRua retorne List<Endereco>
-                .map(EnderecoDTOResponse::valueOf) // Converte Model para DTO
-                .collect(Collectors.toList());
-    }
+    @Inject
+    UsuarioRepository usuarioRepository;
 
     @Override
     @Transactional
     public EnderecoDTOResponse create(EnderecoDTO dto) {
-        // 1. Busca o usuário
+        Municipio municipio = municipioRepository.findById(dto.idMunicipio());
+        if (municipio == null) throw new NotFoundException("Município não encontrado.");
+        
         Usuario usuario = usuarioRepository.findById(dto.idUsuario());
-        if (usuario == null) {
-            throw new NotFoundException("Usuário não encontrado.");
-        }
+        if (usuario == null) throw new NotFoundException("Usuário não encontrado.");
 
         Endereco entity = new Endereco();
         entity.setCep(dto.cep());
         entity.setRua(dto.rua());
+        entity.setNumero(dto.numero());
         entity.setComplemento(dto.complemento());
-        
-        // 2. Associa o endereço ao usuário
-        entity.setUsuario(usuario); 
-        
+        entity.setBairro(dto.bairro());
+        entity.setMunicipio(municipio);
+        entity.setUsuario(usuario);
+
         repository.persist(entity);
-        
+
         return EnderecoDTOResponse.valueOf(entity);
     }
 
@@ -70,29 +55,46 @@ public class EnderecoServiceImpl implements EnderecoService {
     @Transactional
     public EnderecoDTOResponse update(Long id, EnderecoDTO dto) {
         Endereco entity = repository.findById(id);
-        if (entity == null) {
-            throw new NotFoundException("Endereço não encontrado.");
-        }
+        if (entity == null) throw new NotFoundException("Endereço não encontrado.");
 
-        // Busca o usuário novamente para garantir (caso queira trocar o dono do endereço)
-        Usuario usuario = usuarioRepository.findById(dto.idUsuario());
-        if (usuario == null) {
-            throw new NotFoundException("Usuário não encontrado.");
-        }
+        Municipio municipio = municipioRepository.findById(dto.idMunicipio());
+        if (municipio == null) throw new NotFoundException("Município não encontrado.");
 
         entity.setCep(dto.cep());
         entity.setRua(dto.rua());
+        entity.setNumero(dto.numero());
         entity.setComplemento(dto.complemento());
-        entity.setUsuario(usuario);
-        
+        entity.setBairro(dto.bairro());
+        entity.setMunicipio(municipio);
+
         return EnderecoDTOResponse.valueOf(entity);
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
-        if (!repository.deleteById(id)) {
-            throw new NotFoundException("Endereço não encontrado.");
-        }
+        if (!repository.deleteById(id)) throw new NotFoundException("Endereço não encontrado.");
+    }
+
+    @Override
+    public EnderecoDTOResponse findById(Long id) {
+        Endereco entity = repository.findById(id);
+        if (entity == null) throw new NotFoundException("Endereço não encontrado.");
+        return EnderecoDTOResponse.valueOf(entity);
+    }
+
+    @Override
+    public List<EnderecoDTOResponse> findAll() {
+        return repository.listAll().stream().map(EnderecoDTOResponse::valueOf).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EnderecoDTOResponse> findByCep(String cep) {
+        return repository.findByCep(cep).stream().map(EnderecoDTOResponse::valueOf).collect(Collectors.toList());
+    }
+    
+    @Override
+    public List<EnderecoDTOResponse> findByRua(String rua) {
+        return repository.findByRua(rua).stream().map(EnderecoDTOResponse::valueOf).collect(Collectors.toList());
     }
 }
