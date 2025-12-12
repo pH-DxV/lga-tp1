@@ -5,6 +5,7 @@ import java.util.List;
 import br.unitins.topicos1.lgc.Usuario.dto.UsuarioDTO;
 import br.unitins.topicos1.lgc.Usuario.dto.UsuarioDTOResponse;
 import br.unitins.topicos1.lgc.Usuario.service.UsuarioService;
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -53,7 +54,7 @@ public class UsuarioResource {
 
     @POST
     @Transactional // Adicionado
-    @RolesAllowed("Administrador")
+    @PermitAll
     public Response incluir(UsuarioDTO dto) { // Corrigido
         UsuarioDTOResponse retorno = service.create(dto);
         return Response.status(Status.CREATED).entity(retorno).build();
