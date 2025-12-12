@@ -17,18 +17,13 @@ INSERT INTO municipio (nome, id_estado) VALUES ('Varginha', 3);  -- ID 4
 -- ============================================================================
 
 -- 2.1 ADMIN (Apenas na tabela Usuario)
-INSERT INTO usuario (nome, cpf, login, senha, dataNascimento, peso) 
-VALUES ('Raphael Admin', '11111111111', 'raphael', 'KUtBD9kIl87mEJ9A9ykmmWdNdO5AARI95nCklB5rpjrGkb7LVoqBwrpHiYiaMh+yyBfnfYR+G1gJecdm8A85rw==', '2000-01-01', 75.0);
--- Perfil 1 (ADM) - Tabela auxiliar do @ElementCollection
-INSERT INTO usuario_perfil (id_usuario, id_perfil) VALUES (1, 1);
+INSERT INTO usuario (...) VALUES (...);
+INSERT INTO usuario_perfil (...) VALUES (1, 1);
 
 -- 2.2 CLIENTE (Tabela Usuario + Tabela Cliente)
-INSERT INTO usuario (nome, cpf, login, senha, dataNascimento, peso) 
-VALUES ('João Cliente', '22222222222', 'joao', 'KUtBD9kIl87mEJ9A9ykmmWdNdO5AARI95nCklB5rpjrGkb7LVoqBwrpHiYiaMh+yyBfnfYR+G1gJecdm8A85rw==', '1995-05-20', 80.0);
--- Inserção obrigatória na tabela filha para efetivar a herança
-INSERT INTO cliente (id) VALUES (2);
--- Perfil 2 (USER)
-INSERT INTO usuario_perfil (id_usuario, id_perfil) VALUES (2, 2);
+INSERT INTO usuario (...) VALUES (...);
+INSERT INTO cliente (id) VALUES (2); -- <--- ISSO define que ele é cliente
+INSERT INTO usuario_perfil (...) VALUES (2, 2);
 
 -- ============================================================================
 -- 3. CONTATOS E ENDEREÇOS (Vinculados ao Usuário)

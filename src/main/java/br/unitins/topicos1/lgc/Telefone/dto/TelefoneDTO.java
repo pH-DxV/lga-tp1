@@ -11,8 +11,6 @@ public record TelefoneDTO(
 
     @NotBlank(message = "O número não pode ser nulo.")
     @Size(min = 8, max = 9, message = "O número deve ter 8 ou 9 dígitos.")
-    String numero,
-
-    @NotNull(message = "O ID do usuário é obrigatório.")
-    Long idUsuario
+    String numero
+    
 ) {}

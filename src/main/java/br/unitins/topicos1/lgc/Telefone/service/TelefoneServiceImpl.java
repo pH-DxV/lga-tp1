@@ -3,6 +3,9 @@ package br.unitins.topicos1.lgc.Telefone.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.eclipse.microprofile.jwt.JsonWebToken;
+
+import br.unitins.topicos1.lgc.Security.service.SecurityService;
 import br.unitins.topicos1.lgc.Telefone.dto.TelefoneDTO;
 import br.unitins.topicos1.lgc.Telefone.dto.TelefoneDTOResponse;
 import br.unitins.topicos1.lgc.Telefone.model.Telefone;
@@ -21,20 +24,45 @@ public class TelefoneServiceImpl implements TelefoneService {
     TelefoneRepository repository;
 
     @Inject
-    UsuarioRepository usuarioRepository; // Necessário para associar
+    UsuarioRepository usuarioRepository; 
+
+    @Inject
+    JsonWebToken jwt;
+    
+    @Inject
+    SecurityService securityService; // Injeção da Interface SecurityService
 
     @Override
     @Transactional
     public TelefoneDTOResponse create(TelefoneDTO dto) {
-        Usuario usuario = usuarioRepository.findById(dto.idUsuario());
+        // Lógica para determinar o dono do telefone (similar ao que discutimos)
+        Long idUsuarioAlvo = null;
+        
+        // Tenta pegar do Token (se for auto-cadastro)
+        // Nota: O claim "id" deve ter sido adicionado no JwtService
+        if (jwt.getClaim("id") != null) {
+             idUsuarioAlvo = Long.parseLong(jwt.getClaim("id").toString());
+        }
+        
+        // Se o DTO tiver o campo idUsuario (para Admin criar para outros), 
+        // você deve adicionar a lógica aqui para ler do DTO se o token for de Admin.
+
+        if (idUsuarioAlvo == null) {
+            throw new NotFoundException("Não foi possível identificar o usuário dono do telefone.");
+        }
+        
+        Usuario usuario = usuarioRepository.findById(idUsuarioAlvo);
         if (usuario == null) {
             throw new NotFoundException("Usuário não encontrado.");
         }
 
+        // Validação de Segurança usando o serviço injetado
+        securityService.validarPermissao(usuario);
+
         Telefone entity = new Telefone();
         entity.setDdd(dto.ddd());
         entity.setNumero(dto.numero());
-        entity.setUsuario(usuario); // Associa o telefone ao usuário
+        entity.setUsuario(usuario);
 
         repository.persist(entity);
 
@@ -49,24 +77,27 @@ public class TelefoneServiceImpl implements TelefoneService {
             throw new NotFoundException("Telefone não encontrado.");
         }
         
-        Usuario usuario = usuarioRepository.findById(dto.idUsuario());
-        if (usuario == null) {
-            throw new NotFoundException("Usuário não encontrado.");
-        }
-
+        // Validação de Segurança
+        securityService.validarPermissao(entity.getUsuario());
+        
         entity.setDdd(dto.ddd());
         entity.setNumero(dto.numero());
-        entity.setUsuario(usuario);
-
+        
         return TelefoneDTOResponse.valueOf(entity);
     }
 
     @Override
     @Transactional
     public void delete(Long id) {
-        if (!repository.deleteById(id)) {
+        Telefone entity = repository.findById(id);
+        if (entity == null) {
             throw new NotFoundException("Telefone não encontrado.");
         }
+        
+        // Validação de Segurança
+        securityService.validarPermissao(entity.getUsuario());
+        
+        repository.delete(entity);
     }
 
     @Override
@@ -75,11 +106,19 @@ public class TelefoneServiceImpl implements TelefoneService {
         if (entity == null) {
             throw new NotFoundException("Telefone não encontrado.");
         }
+        
+        // Validação de Segurança
+        securityService.validarPermissao(entity.getUsuario());
+        
         return TelefoneDTOResponse.valueOf(entity);
     }
 
     @Override
     public List<TelefoneDTOResponse> findAll() {
+        // Geralmente restrito a Admin no Resource.
+        // Se precisar de validação aqui, seria algo como:
+        // securityService.validarPermissao((Usuario) null); // Isso exigiria adaptação no SecurityService para aceitar null como "apenas admin"
+        
         return repository.listAll().stream()
                 .map(TelefoneDTOResponse::valueOf)
                 .collect(Collectors.toList());
@@ -87,6 +126,12 @@ public class TelefoneServiceImpl implements TelefoneService {
 
     @Override
     public List<TelefoneDTOResponse> findByUsuario(Long idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario);
+        if (usuario == null) throw new NotFoundException("Usuário não encontrado.");
+        
+        // Validação de Segurança
+        securityService.validarPermissao(usuario);
+
         return repository.findByUsuario(idUsuario).stream()
                 .map(TelefoneDTOResponse::valueOf)
                 .collect(Collectors.toList());

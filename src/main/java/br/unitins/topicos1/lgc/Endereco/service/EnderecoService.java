@@ -18,4 +18,6 @@ public interface EnderecoService {
     // Buscas específicas
     List<EnderecoDTOResponse> findByCep(String cep);
     List<EnderecoDTOResponse> findByRua(String rua);
+
+    List<EnderecoDTOResponse> findByUsuario(Long idUsuario);
 }

@@ -34,4 +34,10 @@ public class ClienteRepository implements PanacheRepository<Cliente> {
     public Cliente findByLogin(String login) {
         return find("login", login).firstResult();
     }
+
+    @Override
+    public List<Cliente> listAll() {
+        // Força a busca apenas onde existe registro na tabela cliente (comportamento padrão, mas reforçando)
+        return find("SELECT c FROM Cliente c").list(); 
+    }
 }

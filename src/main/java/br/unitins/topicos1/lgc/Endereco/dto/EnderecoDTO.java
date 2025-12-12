@@ -18,8 +18,6 @@ public record EnderecoDTO(
     String bairro,
 
     @NotNull(message = "O município é obrigatório.")
-    Long idMunicipio,
+    Long idMunicipio
     
-    @NotNull(message = "O ID do usuário é obrigatório.")
-    Long idUsuario
 ) {}
