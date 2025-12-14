@@ -52,7 +52,7 @@ public class MarcaResource {
     @Path("/{id}")
     @RolesAllowed({"Administrador"})
     public Response delete(@PathParam("id") Long id) {
-        LOG.warn("INICIANDO METODO delete [ ADM ACESS ]");
+        LOG.warn("INICIANDO METODO delete PARA MARCA: "+ id + "[ ADM ACESS ]");
         marcaService.delete(id);
         return Response.noContent().build();
     }
