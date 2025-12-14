@@ -2,6 +2,8 @@ package br.unitins.topicos1.lgc.Usuario.resource;
 
 import java.util.List;
 
+import org.jboss.logging.Logger;
+
 import br.unitins.topicos1.lgc.Usuario.dto.UsuarioDTO;
 import br.unitins.topicos1.lgc.Usuario.dto.UsuarioDTOResponse;
 import br.unitins.topicos1.lgc.Usuario.service.UsuarioService;
@@ -29,10 +31,14 @@ public class UsuarioResource {
     @Inject
     UsuarioService service;
 
+    private static final Logger LOG = Logger.getLogger(UsuarioResource.class);
+
     @GET
     @RolesAllowed("Administrador")
     public Response buscarTodos() { // Corrigido
+        LOG.info("LISTANDO TODOS OS USUARIOS [ ADM ACESS ]");
         List<UsuarioDTOResponse> lista = service.findAll();
+        LOG.info("TOTAL DE USUARIOS RETORNADOS: "+lista.size());
         return Response.ok(lista).build();
     }
 
@@ -41,6 +47,7 @@ public class UsuarioResource {
     @Path("/{id}")
     @RolesAllowed("Administrador")
     public Response findById(@PathParam("id") Long id) {
+        LOG.info("BUSCANDO OS DETALHES DO USUARIO: " + id + " POR ID [ ADM ACESS ]");
         return Response.ok(service.findById(id)).build();
     }
 
@@ -48,6 +55,7 @@ public class UsuarioResource {
     @Path("/find/{nome}")
     @RolesAllowed("Administrador")
     public Response buscarPorNome(@PathParam("nome") String nome) { // Corrigido
+        LOG.info("BUSCANDO POR NOME: '"+ nome + "' [ ADM ACESS ]");
         List<UsuarioDTOResponse> lista = service.findByNome(nome);
         return Response.ok(lista).build();
     }
@@ -56,6 +64,7 @@ public class UsuarioResource {
     @Transactional // Adicionado
     @PermitAll
     public Response incluir(UsuarioDTO dto) { // Corrigido
+        LOG.info("INICIANDO METODO create [ ADM ACESS ]");
         UsuarioDTOResponse retorno = service.create(dto);
         return Response.status(Status.CREATED).entity(retorno).build();
     }
@@ -65,6 +74,7 @@ public class UsuarioResource {
     @Transactional // Adicionado
     @RolesAllowed("Administrador")
     public Response alterar(@PathParam("id") Long id, UsuarioDTO dto) { // Corrigido
+        LOG.info("INICIANDO METODO update PARA USUARIO: " + id + "[ ADM ACESS ]");
         UsuarioDTOResponse retorno = service.update(id, dto);
         return Response.ok(retorno).build();
     }
@@ -74,6 +84,7 @@ public class UsuarioResource {
     @Transactional // Adicionado
     @RolesAllowed("Administrador")
     public Response apagar(@PathParam("id") Long id) { // Corrigido
+        LOG.warn("INICIANDO METODO delete PARA USUARIO: "+ id);
         service.delete(id);
         return Response.noContent().build();
     }

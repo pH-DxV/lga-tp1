@@ -1,5 +1,7 @@
 package br.unitins.topicos1.lgc.CategoriaDoCafe.resource;
 
+import org.jboss.logging.Logger;
+
 import br.unitins.topicos1.lgc.CategoriaDoCafe.dto.CategoriaDoCafeDTO;
 import br.unitins.topicos1.lgc.CategoriaDoCafe.service.CategoriaDoCafeService;
 import jakarta.annotation.security.PermitAll;
@@ -26,9 +28,12 @@ public class CategoriaDoCafeResource {
     @Inject
     CategoriaDoCafeService service;
 
+    private static final Logger LOG = Logger.getLogger(CategoriaDoCafeResource.class);
+
     @POST
     @RolesAllowed({"Administrador"})
     public Response create(@Valid CategoriaDoCafeDTO dto) {
+        LOG.info("INICIANDO METODO create [ ADM ACESS ]");
         return Response.status(Status.CREATED).entity(service.create(dto)).build();
     }
 
@@ -36,6 +41,7 @@ public class CategoriaDoCafeResource {
     @Path("/{id}")
     @RolesAllowed({"Administrador"})
     public Response update(@PathParam("id") Long id, @Valid CategoriaDoCafeDTO dto) {
+        LOG.info("INICIANDO METODO update PARA CATEGORIA: " + id +" [ ADM ACESS ]");
         return Response.ok(service.update(id, dto)).build();
     }
 
@@ -43,6 +49,7 @@ public class CategoriaDoCafeResource {
     @Path("/{id}")
     @RolesAllowed({"Administrador"})
     public Response delete(@PathParam("id") Long id) {
+        LOG.warn("INICIANDO METODO delete PARA CATEGORIA: " + id + " [ ADM ACESS ]");
         service.delete(id);
         return Response.noContent().build();
     }
@@ -50,6 +57,7 @@ public class CategoriaDoCafeResource {
     @GET
     @RolesAllowed({"Administrador", "Usuario"})
     public Response findAll() {
+        LOG.info("LISTANDO TODOS AS CATEGORIAS DE CAFE");
         return Response.ok(service.findAll()).build();
     }
 
@@ -57,6 +65,7 @@ public class CategoriaDoCafeResource {
     @Path("/{id}")
     @PermitAll
     public Response findById(@PathParam("id") Long id) {
+        LOG.info("BUSCANDO OS DETALHES DA CATEGORIA: " + id);
         return Response.ok(service.findById(id)).build();
     }
 
@@ -64,6 +73,7 @@ public class CategoriaDoCafeResource {
     @Path("/search/{nome}")
     @PermitAll
     public Response findByNome(@PathParam("nome") String nome) {
+        LOG.info("BUSCANDO AS CATEGORIAS POR NOME: '" + nome + "'");
         return Response.ok(service.findByNome(nome)).build();
     }
 }

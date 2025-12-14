@@ -1,7 +1,6 @@
 package br.unitins.topicos1.lgc.Telefone.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record TelefoneDTO(

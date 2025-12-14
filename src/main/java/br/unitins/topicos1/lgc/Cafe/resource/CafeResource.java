@@ -1,5 +1,7 @@
 package br.unitins.topicos1.lgc.Cafe.resource;
 
+import org.jboss.logging.Logger;
+
 import br.unitins.topicos1.lgc.Cafe.dto.CafeDTO;
 import br.unitins.topicos1.lgc.Cafe.service.CafeService;
 import jakarta.annotation.security.PermitAll;
@@ -28,9 +30,12 @@ public class CafeResource {
     @Inject
     CafeService cafeService;
 
+    private static final Logger LOG = Logger.getLogger(CafeResource.class);
+
     @POST
     @RolesAllowed("Administrador")
     public Response create(@Valid CafeDTO dto) {
+        LOG.info("INICIANDO METODO create");
         return Response.status(Status.CREATED).entity(cafeService.create(dto)).build();
     }
 
@@ -39,6 +44,7 @@ public class CafeResource {
     @Path("/{id}")
     @RolesAllowed("Administrador")
     public Response update(@PathParam("id") Long id, @Valid CafeDTO dto) {
+        LOG.info("INICIANDO METODO update PARA CAFE" + id);
         return Response.ok(cafeService.update(id, dto)).build();
     }
 
@@ -47,6 +53,7 @@ public class CafeResource {
     @Path("/{id}")
     @RolesAllowed("Administrador")
     public Response delete(@PathParam("id") Long id) {
+        LOG.warn("INICIANDO METODO deletet PARA CAFE"+ id + " [ ADM ACESS ]");
         cafeService.delete(id);
         return Response.noContent().build();
     }
@@ -54,6 +61,7 @@ public class CafeResource {
     @GET
     @PermitAll
     public Response findAll() {
+        LOG.info("LISTANDO TODOS OS CAFES");
         return Response.ok(cafeService.findAll()).build();
     }
 
@@ -61,6 +69,7 @@ public class CafeResource {
     @Path("/{id}")
     @PermitAll
     public Response findById(@PathParam("id") Long id) {
+        LOG.info("BUSCANDO OS DETALHES DO CAFE "+ id + " POR ID");
         return Response.ok(cafeService.findById(id)).build();
     }
 
@@ -68,6 +77,7 @@ public class CafeResource {
     @Path("/search/nome/{nome}")
     @PermitAll
     public Response findByNome(@PathParam("nome") String nome) {
+        LOG.info("BUSCANDO POR NOME: '"+ nome + "'");
         return Response.ok(cafeService.findByNome(nome)).build();
     }
     
@@ -77,6 +87,7 @@ public class CafeResource {
     public Response findByPontuacao(
             @QueryParam("min") Integer minSCA,
             @QueryParam("max") Integer maxSCA) {
+        LOG.info("LISTANDO TODOS OS CAFES POR PONTUACAO");
         
         if (minSCA == null && maxSCA == null) {
             return Response.status(Status.BAD_REQUEST)

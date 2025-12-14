@@ -22,10 +22,11 @@ public record CafeDTOResponse(
     Integer pontuacaoSCA,
     Double preco,
     Double peso,
-    Integer estoque // O campo que será exibido no JSON
+    Integer estoque // O campo continua existindo para o Front-end
 ) {
     
-    // --- ESTE É O MÉTODO QUE FALTA E VAI CORRIGIR O ERRO ---
+    // --- MÉTODO PRINCIPAL ATUALIZADO ---
+    // Agora recebe o 'saldoEstoque' vindo do EstoqueService
     public static CafeDTOResponse valueOf(Cafe cafe, Integer saldoEstoque) {
         return new CafeDTOResponse(
             cafe.getId(),
@@ -40,11 +41,11 @@ public record CafeDTOResponse(
             cafe.getPontuacaoSCA(),
             cafe.getPreco(),
             cafe.getPeso(),
-            saldoEstoque // Aqui usamos o Integer que vem do Service
+            saldoEstoque // Usa o valor passado externamente
         );
     }
 
-    // Método de conveniência (opcional, para manter compatibilidade se necessário)
+    // Método de conveniência (opcional, assume 0 se não informado)
     public static CafeDTOResponse valueOf(Cafe cafe) {
         return valueOf(cafe, 0); 
     }

@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.eclipse.microprofile.jwt.JsonWebToken;
-
 import br.unitins.topicos1.lgc.Cafe.model.Cafe;
 import br.unitins.topicos1.lgc.Cafe.repository.CafeRepository;
 import br.unitins.topicos1.lgc.Endereco.model.Endereco;
@@ -20,13 +18,13 @@ import br.unitins.topicos1.lgc.Pedido.dto.PedidoDTOResponse;
 import br.unitins.topicos1.lgc.Pedido.model.Pedido;
 import br.unitins.topicos1.lgc.Pedido.model.PedidoStatus;
 import br.unitins.topicos1.lgc.Pedido.repository.PedidoRepository;
+import br.unitins.topicos1.lgc.Security.service.SecurityService;
 import br.unitins.topicos1.lgc.Usuario.model.Usuario;
 import br.unitins.topicos1.lgc.Usuario.repository.UsuarioRepository;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.NotFoundException;
 
 @ApplicationScoped
@@ -48,24 +46,21 @@ public class PedidoServiceImpl implements PedidoService {
     EstoqueService estoqueService;
     
     @Inject
-    FreteService freteService; // INJETE O SERVIÇO AQUI
+    FreteService freteService;
     
     @Inject
-    JsonWebToken jwt;
+    SecurityService securityService; // Injeção da segurança centralizada
 
     @Override
     @Transactional
     public PedidoDTOResponse create(PedidoDTO dto) {
-        // 1. Validações Iniciais
+        // 1. Busca o usuário
         Usuario usuario = usuarioRepository.findById(dto.idUsuario());
         if (usuario == null) throw new NotFoundException("Usuário não encontrado.");
 
-        String loginLogado = jwt.getSubject();
-        boolean isAdmin = jwt.getGroups() != null && jwt.getGroups().contains("Administrador");
-        
-        if (loginLogado != null && !usuario.getLogin().equals(loginLogado) && !isAdmin) {
-             throw new ForbiddenException("Você não tem permissão para criar pedidos para outro usuário.");
-        }
+        // 2. Validação de Segurança (Centralizada)
+        // Garante que o usuário logado é o mesmo do pedido (ou é Admin)
+        securityService.validarPermissao(usuario);
 
         Endereco endereco = enderecoRepository.findById(dto.idEnderecoEntrega());
         if (endereco == null) throw new NotFoundException("Endereço não encontrado.");
@@ -76,13 +71,12 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setDataHora(LocalDateTime.now());
         pedido.setStatus(PedidoStatus.AGUARDANDO_PAGAMENTO);
         
-        // --- CÁLCULO DO FRETE ---
+        // Cálculo do Frete
         Double valorFrete = freteService.calcularFrete(endereco);
         pedido.setValorFrete(valorFrete);
-        // ------------------------
 
         List<ItemPedido> itens = new ArrayList<>();
-        Double totalItens = 0.0; // Soma só dos produtos
+        Double totalItens = 0.0; 
 
         if (dto.itens() != null && !dto.itens().isEmpty()) {
             for (ItemPedidoDTO itemDto : dto.itens()) {
@@ -105,35 +99,28 @@ public class PedidoServiceImpl implements PedidoService {
         }
 
         pedido.setItens(itens);
-        
-        // --- TOTAL FINAL = PRODUTOS + FRETE ---
-        pedido.setTotalPedido(totalItens + valorFrete);
-        // --------------------------------------
+        pedido.setTotalPedido(totalItens + valorFrete); // Total = Produtos + Frete
 
         repository.persist(pedido);
         
         return PedidoDTOResponse.valueOf(pedido);
     }
 
-    // ... (Os outros métodos findById, findAll, etc. continuam iguais) ...
     @Override
     public PedidoDTOResponse findById(Long id) {
         Pedido pedido = repository.findById(id);
         if (pedido == null) throw new NotFoundException("Pedido não encontrado.");
         
-        String loginLogado = jwt.getSubject();
-        String loginDonoPedido = pedido.getUsuario().getLogin();
-        boolean isAdmin = jwt.getGroups() != null && jwt.getGroups().contains("Administrador");
-        
-        if (loginLogado != null && !loginDonoPedido.equals(loginLogado) && !isAdmin) {
-             throw new ForbiddenException("Você não tem permissão para acessar este pedido.");
-        }
+        // Validação de Segurança
+        // Garante que só o dono do pedido (ou Admin) pode vê-lo
+        securityService.validarPermissao(pedido.getUsuario());
 
         return PedidoDTOResponse.valueOf(pedido);
     }
 
     @Override
     public List<PedidoDTOResponse> findAll() {
+        // Geralmente restrito a Admin no Resource
         return repository.listAll().stream()
                 .map(PedidoDTOResponse::valueOf)
                 .collect(Collectors.toList());
@@ -144,13 +131,9 @@ public class PedidoServiceImpl implements PedidoService {
         Usuario usuarioSolicitado = usuarioRepository.findById(idUsuario);
         if (usuarioSolicitado == null) throw new NotFoundException("Usuário não encontrado.");
 
-        String loginLogado = jwt.getSubject();
-        String loginSolicitado = usuarioSolicitado.getLogin();
-        boolean isAdmin = jwt.getGroups() != null && jwt.getGroups().contains("Administrador");
-        
-        if (loginLogado != null && !loginSolicitado.equals(loginLogado) && !isAdmin) {
-             throw new ForbiddenException("Você não tem permissão para ver os pedidos deste usuário.");
-        }
+        // Validação de Segurança
+        // Garante que eu só vejo a MINHA lista de pedidos (ou sou Admin)
+        securityService.validarPermissao(usuarioSolicitado);
 
         return repository.findByUsuario(idUsuario).stream()
                 .map(PedidoDTOResponse::valueOf)

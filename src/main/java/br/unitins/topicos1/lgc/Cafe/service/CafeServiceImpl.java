@@ -35,12 +35,14 @@ public class CafeServiceImpl implements CafeService {
     @Inject
     EstoqueService estoqueService; 
 
-    // --- Método Auxiliar para Conversão (Resolve o erro de inferência) ---
+    // --- Método Auxiliar para Conversão ---
+    // Busca o saldo no serviço de estoque e monta o DTO
     private CafeDTOResponse converterParaDTO(Cafe cafe) {
         Integer saldo = estoqueService.consultarQuantidade(cafe.getId());
+        // Chama o valueOf que aceita (Cafe, Integer)
         return CafeDTOResponse.valueOf(cafe, saldo);
     }
-    // ---------------------------------------------------------------------
+    // -------------------------------------
 
     @Override
     public boolean verificarEstoque(Long idCafe, Integer quantidade) {
@@ -78,12 +80,13 @@ public class CafeServiceImpl implements CafeService {
         cafe.setPreco(dto.preco());
         cafe.setPeso(dto.peso());
         
+        // Persiste o produto (sem o campo estoque, pois foi removido da entidade)
         cafeRepository.persist(cafe);
         
-        // Inicia o estoque
+        // Inicia o estoque na entidade separada (usando o ID do café recém-criado)
         estoqueService.iniciarEstoque(cafe.getId(), dto.estoque());
         
-        // Retorna o DTO com o estoque inicial que acabamos de setar
+        // Retorna o DTO usando o valor inicial que passamos
         return CafeDTOResponse.valueOf(cafe, dto.estoque());
     }
 
@@ -112,7 +115,7 @@ public class CafeServiceImpl implements CafeService {
         cafe.setPreco(dto.preco());
         cafe.setPeso(dto.peso());
         
-        // Busca o saldo atual para retornar no DTO
+        // Busca o saldo atual para retornar no DTO (o update de produto não altera estoque)
         Integer saldo = estoqueService.consultarQuantidade(id);
         
         return CafeDTOResponse.valueOf(cafe, saldo);
@@ -136,25 +139,25 @@ public class CafeServiceImpl implements CafeService {
 
     @Override
     public List<CafeDTOResponse> findAll() {
-        // CORREÇÃO AQUI: Usando o método auxiliar para evitar erro de inferência
+        // CORREÇÃO: Usando lambda explícita para evitar erro de inferência
         return cafeRepository.listAll().stream()
-                .map(this::converterParaDTO) 
+                .map(cafe -> converterParaDTO(cafe)) 
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<CafeDTOResponse> findByNome(String nome) {
-        // CORREÇÃO AQUI
+        // CORREÇÃO: Usando lambda explícita
         return cafeRepository.findByNomeLike(nome).stream()
-                .map(this::converterParaDTO)
+                .map(cafe -> converterParaDTO(cafe))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<CafeDTOResponse> findByPontuacao(Integer minSCA, Integer maxSCA) {
-        // CORREÇÃO AQUI
+        // CORREÇÃO: Usando lambda explícita
         return cafeRepository.findByPontuacaoRange(minSCA, maxSCA).stream()
-                .map(this::converterParaDTO)
+                .map(cafe -> converterParaDTO(cafe))
                 .collect(Collectors.toList());
     }
 }

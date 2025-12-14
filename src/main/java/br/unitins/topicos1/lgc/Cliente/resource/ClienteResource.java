@@ -2,6 +2,8 @@ package br.unitins.topicos1.lgc.Cliente.resource;
 
 import java.util.List;
 
+import org.jboss.logging.Logger;
+
 import br.unitins.topicos1.lgc.Cliente.dto.ClienteDTO;
 import br.unitins.topicos1.lgc.Cliente.dto.ClienteDTOResponse;
 import br.unitins.topicos1.lgc.Cliente.service.ClienteService;
@@ -30,6 +32,8 @@ public class ClienteResource {
     @Inject
     ClienteService service;
 
+    private static final Logger LOG = Logger.getLogger(ClienteResource.class);
+
     /**
      * Endpoint público para o cadastro de novos clientes.
      * O perfil é forçado como USER no ClienteServiceImpl.
@@ -38,8 +42,9 @@ public class ClienteResource {
     @Transactional
     @PermitAll
     public Response create(@Valid ClienteDTO dto) {
+        LOG.info("INICIANDO METODO create");
         ClienteDTOResponse response = service.create(dto);
-        // Retorna 201 Created com o novo cliente
+        LOG.info("CLIENTE CRIADO COM SUCESSO. ID= "+ response.id());
         return Response.status(Status.CREATED).entity(response).build();
     }
 
@@ -53,6 +58,7 @@ public class ClienteResource {
     @PermitAll
     //@RolesAllowed({"Administrador", "Usuario"})
     public Response update(@PathParam("id") Long id, @Valid ClienteDTO dto) {
+        LOG.info("INICIANDO METODO update PARA CLIENTE: " + id);
         ClienteDTOResponse response = service.update(id, dto);
         // Retorna 200 OK com o objeto atualizado
         return Response.ok(response).build();
@@ -67,6 +73,7 @@ public class ClienteResource {
     @PermitAll
     //@RolesAllowed({"Administrador", "Usuario"})
     public Response delete(@PathParam("id") Long id) {
+        LOG.warn("INICIANDO METODO delete PARA CLIENTE: " + id);
         service.delete(id);
         // Retorna 204 No Content
         return Response.noContent().build();
@@ -79,7 +86,11 @@ public class ClienteResource {
     @PermitAll
     //@RolesAllowed({"Administrador"})
     public Response findAll() {
+        LOG.info("LISTANDO TODOS OS CLIENTES [ADM ACESS]");
+
         List<ClienteDTOResponse> lista = service.findAll();
+        
+        LOG.info("TOTAL DE CLIENTES RETORNADOS: "+ lista.size());
         return Response.ok(lista).build();
     }
 
@@ -91,6 +102,7 @@ public class ClienteResource {
     @PermitAll
     //@RolesAllowed({"Administrador", "Usuario"})
     public Response findById(@PathParam("id") Long id) {
+        LOG.info("BUSCANDO OS DETALHES DO CLIENTE: " + id + " POR ID");
         return Response.ok(service.findById(id)).build();
     }
 
@@ -102,6 +114,7 @@ public class ClienteResource {
     @PermitAll
     //@RolesAllowed({"Administrador"})
     public Response findByNome(@PathParam("nome") String nome) {
+        LOG.info("BUSCANDO POR NOME: '" + nome + "'");
         List<ClienteDTOResponse> lista = service.findByNome(nome);
         return Response.ok(lista).build();
     }

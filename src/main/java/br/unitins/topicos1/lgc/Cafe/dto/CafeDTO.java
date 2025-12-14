@@ -45,6 +45,7 @@ public record CafeDTO(
     @Positive(message = "O peso deve ser um valor positivo.")
     Double peso,
     
+    // Este campo é essencial para INICIAR o estoque na nova entidade
     @NotNull(message = "O estoque não pode ser nulo.")
     @PositiveOrZero(message = "O estoque deve ser zero ou maior.")
     Integer estoque

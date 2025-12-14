@@ -1,6 +1,6 @@
 package br.unitins.topicos1.lgc.Estado.resource;
 
-//import org.jboss.logging.Logger;
+import org.jboss.logging.Logger;
 
 import br.unitins.topicos1.lgc.Estado.dto.EstadoDTO;
 import br.unitins.topicos1.lgc.Estado.dto.EstadoDTOResponse;
@@ -29,13 +29,12 @@ public class EstadoResource {
     @Inject
     EstadoService service;
 
-    //private final static final Logger LOG =
-    //    Logger.getLogger(EstadoResource.class);
+    private static final Logger LOG = Logger.getLogger(EstadoResource.class);
 
     @GET
     @PermitAll
     public Response buscarTodos() {
-       // LOG.info("ENTROU NO METODO buscarTodos");
+       LOG.info("LISTATNDO TODOS OS ESTADOS");
         return Response.ok(service.findAll()).build();
     }
 
@@ -43,6 +42,7 @@ public class EstadoResource {
     @Path("/find/{nome}")
     @PermitAll
     public Response buscarPorNome(@PathParam("nome") String nome) { // Corrigido
+        LOG.info("BUSCANDO ESTADO POR NOME: "+nome);
         // Agora o service.findByNome() retorna List<EstadoDTOResponse>
         return Response.ok(service.findByNome(nome)).build();
     }
@@ -51,6 +51,7 @@ public class EstadoResource {
     @Path("/{id}")
     @PermitAll
     public Response findById(@PathParam("id") Long id) {
+        LOG.info("BUSCANDO ESTADO POR ID: " + id);
         return Response.ok(service.findById(id)).build();
     }
 
@@ -58,7 +59,9 @@ public class EstadoResource {
     @Transactional // Adicionado
     @RolesAllowed({"Administrador"})
     public Response incluir(EstadoDTO dto) {
+        LOG.info("INICIANDO METODO create [ ADM ACESS ]");
         EstadoDTOResponse response = service.create(dto);
+        LOG.info("ESTADO CRIADO COM SUCESSO. ID= "+response.id());
         return Response.status(Status.CREATED).entity(response).build();
     }
 
@@ -67,6 +70,7 @@ public class EstadoResource {
     @Transactional // Adicionado
     @RolesAllowed({"Administrador"})
     public Response alterar(@PathParam("id") Long id, EstadoDTO dto) { // Corrigido
+        LOG.info("INICIANDO METODO update PARA O ESTADO: " + id + " [ ADM ACESS ]");
         // Corrigido para retornar o objeto atualizado (200 OK)
         EstadoDTOResponse response = service.update(id, dto);
         return Response.ok(response).build();
@@ -77,6 +81,7 @@ public class EstadoResource {
     @Transactional // Adicionado
     @RolesAllowed({"Administrador"})
     public Response apagar(@PathParam("id") Long id) { // Corrigido
+        LOG.warn("INICIANDO METODO delete PARA ESTADO: " + id + " [ ADM ACESS ]");
         service.delete(id);
         return Response.noContent().build();
     }

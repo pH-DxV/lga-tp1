@@ -17,6 +17,7 @@ import br.unitins.topicos1.lgc.Pagamento.repository.PagamentoRepository;
 import br.unitins.topicos1.lgc.Pedido.model.Pedido;
 import br.unitins.topicos1.lgc.Pedido.model.PedidoStatus;
 import br.unitins.topicos1.lgc.Pedido.repository.PedidoRepository;
+import br.unitins.topicos1.lgc.Security.service.SecurityService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -32,11 +33,20 @@ public class PagamentoServiceImpl implements PagamentoService {
     @Inject
     PedidoRepository pedidoRepository;
 
+    @Inject
+    SecurityService securityService; // Injeção da segurança centralizada
+
+    // --- CARTÃO DE CRÉDITO ---
     @Override
     @Transactional
     public PagamentoCartaoDTOResponse pagarCartao(PagamentoCartaoDTO dto) {
+        // 1. Busca e Valida o Pedido
         Pedido pedido = validarPedido(dto.idPedido());
 
+        // 2. Validação de Segurança: O usuário logado é dono deste pedido?
+        securityService.validarPermissao(pedido.getUsuario());
+
+        // 3. Validações de Cartão (Simulação)
         if ("000".equals(dto.cvv())) { 
              throw new BadRequestException("Pagamento recusado pela operadora.");
         }
@@ -62,19 +72,21 @@ public class PagamentoServiceImpl implements PagamentoService {
         return PagamentoCartaoDTOResponse.valueOf(pagamento);
     }
 
+    // --- PIX ---
     @Override
     @Transactional
     public PagamentoPixDTOResponse pagarPix(PagamentoPixDTO dto) {
         Pedido pedido = validarPedido(dto.idPedido());
+        
+        // Validação de Segurança
+        securityService.validarPermissao(pedido.getUsuario());
 
         PagamentoPix pagamento = new PagamentoPix();
         pagamento.setPedido(pedido);
         pagamento.setValor(pedido.getTotalPedido());
         pagamento.setConfirmado(false);
         
-        // Mantém ou define explicitamente como AGUARDANDO (se já não estiver)
         pedido.setPagamento(pagamento);
-        // pedido.setStatus(PedidoStatus.AGUARDANDO_PAGAMENTO); // Já nasce assim, mas reforça
         
         pagamento.setChavePixDestino(UUID.randomUUID().toString());
         pagamento.setDataExpiracaoToken(LocalDateTime.now().plusMinutes(30));
@@ -84,18 +96,21 @@ public class PagamentoServiceImpl implements PagamentoService {
         return PagamentoPixDTOResponse.valueOf(pagamento);
     }
 
+    // --- BOLETO ---
     @Override
     @Transactional
     public PagamentoBoletoDTOResponse pagarBoleto(PagamentoBoletoDTO dto) {
         Pedido pedido = validarPedido(dto.idPedido());
 
+        // Validação de Segurança
+        securityService.validarPermissao(pedido.getUsuario());
+
         PagamentoBoleto pagamento = new PagamentoBoleto();
         pagamento.setPedido(pedido);
         pagamento.setValor(pedido.getTotalPedido());
-        pagamento.setConfirmado(false);
+        pagamento.setConfirmado(false); 
 
         pedido.setPagamento(pagamento);
-        // pedido.setStatus(PedidoStatus.AGUARDANDO_PAGAMENTO);
 
         pagamento.setCodigoBarras("34191.79001 01043.510047 91020.150008 8 " + System.currentTimeMillis());
         pagamento.setDataVencimento(LocalDate.now().plusDays(3));
@@ -113,10 +128,8 @@ public class PagamentoServiceImpl implements PagamentoService {
         if (pedido.getTotalPedido() <= 0) {
             throw new BadRequestException("Valor do pedido inválido.");
         }
-        if (pedido.getStatus() == PedidoStatus.PAGO 
-            || pedido.getStatus() == PedidoStatus.CANCELADO 
-            || pedido.getStatus() == PedidoStatus.ENVIADO 
-            || pedido.getStatus() == PedidoStatus.ENTREGUE) {
+        // Regra: Não pode pagar pedido já pago ou cancelado
+        if (pedido.getStatus() != PedidoStatus.AGUARDANDO_PAGAMENTO) {
             throw new BadRequestException("Este pedido não pode ser pago (Status: " + pedido.getStatus().getLabel() + ")");
         }
         return pedido;

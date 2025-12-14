@@ -1,5 +1,7 @@
 package br.unitins.topicos1.lgc.Pagamento.resource;
 
+import org.jboss.logging.Logger;
+
 import br.unitins.topicos1.lgc.Pagamento.dto.PagamentoBoletoDTO;
 import br.unitins.topicos1.lgc.Pagamento.dto.PagamentoBoletoDTOResponse;
 import br.unitins.topicos1.lgc.Pagamento.dto.PagamentoCartaoDTO;
@@ -26,11 +28,14 @@ public class PagamentoResource {
     @Inject
     PagamentoService service;
 
+    private static final Logger LOG = Logger.getLogger(PagamentoResource.class);
+
     @POST
     @Path("/cartao")
     @RolesAllowed({"Usuario", "Administrador"})
     @Transactional
     public Response pagarCartao(@Valid PagamentoCartaoDTO dto) {
+        LOG.info("INICIANTO METODO pagarCartao");
         PagamentoCartaoDTOResponse response = service.pagarCartao(dto);
         return Response.status(201).entity(response).build();
     }
@@ -40,6 +45,7 @@ public class PagamentoResource {
     @RolesAllowed({"Usuario", "Administrador"})
     @Transactional
     public Response pagarPix(@Valid PagamentoPixDTO dto) {
+        LOG.info("INICIANTO METODO pagarPix");
         PagamentoPixDTOResponse response = service.pagarPix(dto);
         return Response.status(201).entity(response).build();
     }
@@ -49,6 +55,7 @@ public class PagamentoResource {
     @RolesAllowed({"Usuario", "Administrador"})
     @Transactional
     public Response pagarBoleto(@Valid PagamentoBoletoDTO dto) {
+        LOG.info("INICIANTO METODO pagarBoleto");
         PagamentoBoletoDTOResponse response = service.pagarBoleto(dto);
         return Response.status(201).entity(response).build();
     }
