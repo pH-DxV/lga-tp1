@@ -11,6 +11,7 @@ import br.unitins.topicos1.lgc.NivelDeTorra.model.NivelDeTorra;
 import br.unitins.topicos1.lgc.NotaSensorial.model.NotaSensorial;
 import br.unitins.topicos1.lgc.Tratamento.model.Tratamento;
 
+import java.math.BigDecimal;
 // --- Imports Adicionados para a nova coleção de Notas ---
 import java.util.Set; // Para a coleção de múltiplas notas
 import jakarta.persistence.CollectionTable;
@@ -37,8 +38,8 @@ public class Cafe extends DefaultEntity {
     // --- CAMPO ESTOQUE REMOVIDO DAQUI ---
     // O estoque agora vive na entidade br.unitins.topicos1.lgc.Estoque.model.Estoque
 
-    @Column(nullable = false)
-    private Double preco;
+    @Column(nullable = false, precision = 10, scale = 2) // Definir precisão e escala para BigDecimal
+    private BigDecimal preco;
 
     @Column(nullable = false)
     private Double peso;
@@ -75,8 +76,8 @@ public class Cafe extends DefaultEntity {
     public void setNome(String nome) { this.nome = nome; }
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
-    public Double getPreco() { return preco; }
-    public void setPreco(Double preco) { this.preco = preco; }
+    public BigDecimal getPreco() { return preco; } // Alterado para BigDecimal
+    public void setPreco(BigDecimal preco) { this.preco = preco; } // Alterado para BigDecimal
     public Double getPeso() { return peso; }
     public void setPeso(Double peso) { this.peso = peso; }
     public Integer getPontuacaoSCA() { return pontuacaoSCA; }

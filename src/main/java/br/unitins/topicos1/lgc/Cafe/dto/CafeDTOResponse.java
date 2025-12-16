@@ -1,5 +1,6 @@
 package br.unitins.topicos1.lgc.Cafe.dto;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 import br.unitins.topicos1.lgc.Cafe.model.Cafe;
@@ -20,7 +21,7 @@ public record CafeDTOResponse(
     Tratamento tratamento,
     Set<NotaSensorial> notasSensoriais,
     Integer pontuacaoSCA,
-    Double preco,
+    BigDecimal preco,
     Double peso,
     Integer estoque // O campo continua existindo para o Front-end
 ) {

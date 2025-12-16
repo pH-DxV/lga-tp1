@@ -1,5 +1,6 @@
 package br.unitins.topicos1.lgc.Cafe.dto;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 import br.unitins.topicos1.lgc.NotaSensorial.model.NotaSensorial;
@@ -39,7 +40,7 @@ public record CafeDTO(
     
     @NotNull(message = "O preço não pode ser nulo.")
     @Positive(message = "O preço deve ser um valor positivo.")
-    Double preco,
+    BigDecimal preco,
     
     @NotNull(message = "O peso não pode ser nulo.")
     @Positive(message = "O peso deve ser um valor positivo.")

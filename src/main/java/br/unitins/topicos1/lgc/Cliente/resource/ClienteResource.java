@@ -55,8 +55,7 @@ public class ClienteResource {
     @PUT
     @Path("/{id}")
     @Transactional
-    @PermitAll
-    //@RolesAllowed({"Administrador", "Usuario"})
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response update(@PathParam("id") Long id, @Valid ClienteDTO dto) {
         LOG.info("INICIANDO METODO update PARA CLIENTE: " + id);
         ClienteDTOResponse response = service.update(id, dto);
@@ -70,8 +69,7 @@ public class ClienteResource {
     @DELETE
     @Path("/{id}")
     @Transactional
-    @PermitAll
-    //@RolesAllowed({"Administrador", "Usuario"})
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response delete(@PathParam("id") Long id) {
         LOG.warn("INICIANDO METODO delete PARA CLIENTE: " + id);
         service.delete(id);
@@ -83,8 +81,7 @@ public class ClienteResource {
      * Lista todos os clientes. (Acesso geralmente restrito a ADM).
      */
     @GET
-    @PermitAll
-    //@RolesAllowed({"Administrador"})
+    @RolesAllowed({"Administrador"})
     public Response findAll() {
         LOG.info("LISTANDO TODOS OS CLIENTES [ADM ACESS]");
 
@@ -99,8 +96,7 @@ public class ClienteResource {
      */
     @GET
     @Path("/{id}")
-    @PermitAll
-    //@RolesAllowed({"Administrador", "Usuario"})
+    @RolesAllowed({"Administrador", "Usuario"})
     public Response findById(@PathParam("id") Long id) {
         LOG.info("BUSCANDO OS DETALHES DO CLIENTE: " + id + " POR ID");
         return Response.ok(service.findById(id)).build();
@@ -111,8 +107,7 @@ public class ClienteResource {
      */
     @GET
     @Path("/search/{nome}")
-    @PermitAll
-    //@RolesAllowed({"Administrador"})
+    @RolesAllowed({"Administrador"})
     public Response findByNome(@PathParam("nome") String nome) {
         LOG.info("BUSCANDO POR NOME: '" + nome + "'");
         List<ClienteDTOResponse> lista = service.findByNome(nome);

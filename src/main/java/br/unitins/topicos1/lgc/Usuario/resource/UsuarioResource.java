@@ -62,7 +62,7 @@ public class UsuarioResource {
 
     @POST
     @Transactional // Adicionado
-    @PermitAll
+    @RolesAllowed("Administrador")
     public Response incluir(UsuarioDTO dto) { // Corrigido
         LOG.info("INICIANDO METODO create [ ADM ACESS ]");
         UsuarioDTOResponse retorno = service.create(dto);
