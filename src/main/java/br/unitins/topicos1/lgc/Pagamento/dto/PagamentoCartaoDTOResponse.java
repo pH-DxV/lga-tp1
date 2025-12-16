@@ -1,11 +1,12 @@
 package br.unitins.topicos1.lgc.Pagamento.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import br.unitins.topicos1.lgc.Pagamento.model.PagamentoCartao;
 
 public record PagamentoCartaoDTOResponse(
     Long id,
-    Double valor,
+    BigDecimal valor,
     Boolean confirmado,
     LocalDateTime dataConfirmacao,
     String nomeTitular,

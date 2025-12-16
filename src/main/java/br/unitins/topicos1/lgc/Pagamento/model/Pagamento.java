@@ -1,5 +1,6 @@
 package br.unitins.topicos1.lgc.Pagamento.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import br.unitins.topicos1.lgc.DefaultEntity.model.DefaultEntity;
@@ -15,8 +16,8 @@ import jakarta.persistence.OneToOne;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Pagamento extends DefaultEntity {
 
-    @Column(nullable = false)
-    private Double valor;
+    @Column(nullable = false, precision = 10, scale = 2) // Definir precisão para BigDecimal
+    private BigDecimal valor;
 
     @Column(nullable = false)
     private Boolean confirmado;
@@ -27,16 +28,37 @@ public abstract class Pagamento extends DefaultEntity {
     @JoinColumn(name = "id_pedido", unique = true) 
     private Pedido pedido;
 
-    // Getters e Setters
-    public Double getValor() { return valor; }
-    public void setValor(Double valor) { this.valor = valor; }
+    // --- GETTERS E SETTERS ---
 
-    public Boolean getConfirmado() { return confirmado; }
-    public void setConfirmado(Boolean confirmado) { this.confirmado = confirmado; }
+    public BigDecimal getValor() {
+        return valor;
+    }
 
-    public LocalDateTime getDataConfirmacao() { return dataConfirmacao; }
-    public void setDataConfirmacao(LocalDateTime dataConfirmacao) { this.dataConfirmacao = dataConfirmacao; }
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
+    }
 
-    public Pedido getPedido() { return pedido; }
-    public void setPedido(Pedido pedido) { this.pedido = pedido; }
+    public Boolean getConfirmado() {
+        return confirmado;
+    }
+
+    public void setConfirmado(Boolean confirmado) {
+        this.confirmado = confirmado;
+    }
+
+    public LocalDateTime getDataConfirmacao() {
+        return dataConfirmacao;
+    }
+
+    public void setDataConfirmacao(LocalDateTime dataConfirmacao) {
+        this.dataConfirmacao = dataConfirmacao;
+    }
+
+    public Pedido getPedido() {
+        return pedido;
+    }
+
+    public void setPedido(Pedido pedido) {
+        this.pedido = pedido;
+    }
 }

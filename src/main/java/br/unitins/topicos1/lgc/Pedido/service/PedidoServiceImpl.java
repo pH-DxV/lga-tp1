@@ -1,5 +1,6 @@
 package br.unitins.topicos1.lgc.Pedido.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,57 +50,72 @@ public class PedidoServiceImpl implements PedidoService {
     FreteService freteService;
     
     @Inject
-    SecurityService securityService; // Injeção da segurança centralizada
+    SecurityService securityService;
 
     @Override
     @Transactional
     public PedidoDTOResponse create(PedidoDTO dto) {
-        // 1. Busca o usuário
+        // 1. Validações Iniciais
         Usuario usuario = usuarioRepository.findById(dto.idUsuario());
         if (usuario == null) throw new NotFoundException("Usuário não encontrado.");
 
-        // 2. Validação de Segurança (Centralizada)
-        // Garante que o usuário logado é o mesmo do pedido (ou é Admin)
+        // Validação de Segurança
         securityService.validarPermissao(usuario);
 
         Endereco endereco = enderecoRepository.findById(dto.idEnderecoEntrega());
         if (endereco == null) throw new NotFoundException("Endereço não encontrado.");
 
+        // 2. Criação do Cabeçalho
         Pedido pedido = new Pedido();
         pedido.setUsuario(usuario);
         pedido.setEnderecoEntrega(endereco);
         pedido.setDataHora(LocalDateTime.now());
         pedido.setStatus(PedidoStatus.AGUARDANDO_PAGAMENTO);
         
-        // Cálculo do Frete
-        Double valorFrete = freteService.calcularFrete(endereco);
+        // --- CÁLCULO DO FRETE (BIGDECIMAL) ---
+        // Assumindo que o FreteService já retorna BigDecimal. 
+        // Se retornar Double, use: BigDecimal.valueOf(freteService.calcularFrete(endereco))
+        BigDecimal valorFrete = BigDecimal.valueOf(freteService.calcularFrete(endereco));
         pedido.setValorFrete(valorFrete);
-
+        // -------------------------------------
+        
         List<ItemPedido> itens = new ArrayList<>();
-        Double totalItens = 0.0; 
+        
+        // Inicializa o total com ZERO (BigDecimal)
+        BigDecimal totalItens = BigDecimal.ZERO; 
 
         if (dto.itens() != null && !dto.itens().isEmpty()) {
             for (ItemPedidoDTO itemDto : dto.itens()) {
                 Cafe cafe = cafeRepository.findById(itemDto.idCafe());
                 if (cafe == null) throw new NotFoundException("Café não encontrado (ID: " + itemDto.idCafe() + ")");
 
+                // Baixa de estoque
                 estoqueService.baixarEstoque(cafe.getId(), itemDto.quantidade());
 
                 ItemPedido item = new ItemPedido();
                 item.setQuantidade(itemDto.quantidade());
-                item.setPrecoUnitario(cafe.getPreco());
+                
+                // O preço do café agora é BigDecimal
+                item.setPrecoUnitario(cafe.getPreco()); 
                 item.setCafe(cafe);
                 item.setPedido(pedido);
                 
                 itens.add(item);
-                totalItens += (item.getPrecoUnitario() * item.getQuantidade());
+                
+                // --- CÁLCULO MATEMÁTICO COM BIGDECIMAL ---
+                // total += preco * quantidade
+                BigDecimal valorItem = cafe.getPreco().multiply(BigDecimal.valueOf(item.getQuantidade()));
+                totalItens = totalItens.add(valorItem);
+                // -----------------------------------------
             }
         } else {
             throw new IllegalArgumentException("O pedido deve conter pelo menos um item.");
         }
 
         pedido.setItens(itens);
-        pedido.setTotalPedido(totalItens + valorFrete); // Total = Produtos + Frete
+        
+        // Soma final: Total Itens + Frete
+        pedido.setTotalPedido(totalItens.add(valorFrete));
 
         repository.persist(pedido);
         
@@ -112,7 +128,6 @@ public class PedidoServiceImpl implements PedidoService {
         if (pedido == null) throw new NotFoundException("Pedido não encontrado.");
         
         // Validação de Segurança
-        // Garante que só o dono do pedido (ou Admin) pode vê-lo
         securityService.validarPermissao(pedido.getUsuario());
 
         return PedidoDTOResponse.valueOf(pedido);
@@ -132,7 +147,6 @@ public class PedidoServiceImpl implements PedidoService {
         if (usuarioSolicitado == null) throw new NotFoundException("Usuário não encontrado.");
 
         // Validação de Segurança
-        // Garante que eu só vejo a MINHA lista de pedidos (ou sou Admin)
         securityService.validarPermissao(usuarioSolicitado);
 
         return repository.findByUsuario(idUsuario).stream()

@@ -38,7 +38,10 @@ public class Cafe extends DefaultEntity {
     // --- CAMPO ESTOQUE REMOVIDO DAQUI ---
     // O estoque agora vive na entidade br.unitins.topicos1.lgc.Estoque.model.Estoque
 
-    @Column(nullable = false, precision = 10, scale = 2) // Definir precisão e escala para BigDecimal
+    // --- ALTERAÇÃO PARA BIGDECIMAL ---
+    // precision = 10 (total de dígitos), scale = 2 (casas decimais)
+    // Exemplo: 12345678.90
+    @Column(nullable = false, precision = 10, scale = 2) 
     private BigDecimal preco;
 
     @Column(nullable = false)
@@ -76,8 +79,12 @@ public class Cafe extends DefaultEntity {
     public void setNome(String nome) { this.nome = nome; }
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
-    public BigDecimal getPreco() { return preco; } // Alterado para BigDecimal
-    public void setPreco(BigDecimal preco) { this.preco = preco; } // Alterado para BigDecimal
+    
+    // --- GETTER/SETTER ATUALIZADOS PARA BIGDECIMAL ---
+    public BigDecimal getPreco() { return preco; } 
+    public void setPreco(BigDecimal preco) { this.preco = preco; } 
+    // -------------------------------------------------
+    
     public Double getPeso() { return peso; }
     public void setPeso(Double peso) { this.peso = peso; }
     public Integer getPontuacaoSCA() { return pontuacaoSCA; }

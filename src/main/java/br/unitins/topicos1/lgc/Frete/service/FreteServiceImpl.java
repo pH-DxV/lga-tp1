@@ -1,5 +1,7 @@
 package br.unitins.topicos1.lgc.Frete.service;
 
+import java.math.BigDecimal;
+
 import br.unitins.topicos1.lgc.Endereco.model.Endereco;
 import br.unitins.topicos1.lgc.Estado.model.Estado;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -8,7 +10,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class FreteServiceImpl implements FreteService {
 
     @Override
-    public Double calcularFrete(Endereco endereco) {
+    public BigDecimal calcularFrete(Endereco endereco) {
         // Lógica de simulação baseada na localização
         if (endereco == null || endereco.getMunicipio() == null || endereco.getMunicipio().getEstado() == null) {
             return 0.0;

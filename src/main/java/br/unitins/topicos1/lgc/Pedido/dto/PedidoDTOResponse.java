@@ -1,5 +1,6 @@
 package br.unitins.topicos1.lgc.Pedido.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,8 +14,8 @@ import br.unitins.topicos1.lgc.Usuario.dto.UsuarioDTOResponse;
 public record PedidoDTOResponse(
     Long id,
     LocalDateTime dataHora,
-    Double totalPedido,
-    Double valorFrete, // <-- Campo Adicionado
+    BigDecimal totalPedido,
+    BigDecimal valorFrete, // <-- Campo Adicionado
     UsuarioDTOResponse usuario,
     EnderecoDTOResponse enderecoEntrega,
     List<ItemPedidoDTOResponse> itens,

@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import java.math.BigDecimal;
+
 import br.unitins.topicos1.lgc.Pagamento.dto.PagamentoBoletoDTO;
 import br.unitins.topicos1.lgc.Pagamento.dto.PagamentoBoletoDTOResponse;
 import br.unitins.topicos1.lgc.Pagamento.dto.PagamentoCartaoDTO;
@@ -34,7 +36,7 @@ public class PagamentoServiceImpl implements PagamentoService {
     PedidoRepository pedidoRepository;
 
     @Inject
-    SecurityService securityService; // Injeção da segurança centralizada
+    SecurityService securityService;
 
     // --- CARTÃO DE CRÉDITO ---
     @Override
@@ -53,7 +55,7 @@ public class PagamentoServiceImpl implements PagamentoService {
 
         PagamentoCartao pagamento = new PagamentoCartao();
         pagamento.setPedido(pedido);
-        pagamento.setValor(pedido.getTotalPedido());
+        pagamento.setValor(pedido.getTotalPedido()); // Já é BigDecimal
         pagamento.setConfirmado(true);
         pagamento.setDataConfirmacao(LocalDateTime.now());
         
@@ -78,12 +80,11 @@ public class PagamentoServiceImpl implements PagamentoService {
     public PagamentoPixDTOResponse pagarPix(PagamentoPixDTO dto) {
         Pedido pedido = validarPedido(dto.idPedido());
         
-        // Validação de Segurança
         securityService.validarPermissao(pedido.getUsuario());
 
         PagamentoPix pagamento = new PagamentoPix();
         pagamento.setPedido(pedido);
-        pagamento.setValor(pedido.getTotalPedido());
+        pagamento.setValor(pedido.getTotalPedido()); // Já é BigDecimal
         pagamento.setConfirmado(false);
         
         pedido.setPagamento(pagamento);
@@ -102,12 +103,11 @@ public class PagamentoServiceImpl implements PagamentoService {
     public PagamentoBoletoDTOResponse pagarBoleto(PagamentoBoletoDTO dto) {
         Pedido pedido = validarPedido(dto.idPedido());
 
-        // Validação de Segurança
         securityService.validarPermissao(pedido.getUsuario());
 
         PagamentoBoleto pagamento = new PagamentoBoleto();
         pagamento.setPedido(pedido);
-        pagamento.setValor(pedido.getTotalPedido());
+        pagamento.setValor(pedido.getTotalPedido()); // Já é BigDecimal
         pagamento.setConfirmado(false); 
 
         pedido.setPagamento(pagamento);
@@ -125,7 +125,8 @@ public class PagamentoServiceImpl implements PagamentoService {
         if (pedido == null) {
             throw new NotFoundException("Pedido não encontrado.");
         }
-        if (pedido.getTotalPedido() <= 0) {
+        // Validação com BigDecimal: compareTo <= 0
+        if (pedido.getTotalPedido() == null || pedido.getTotalPedido().compareTo(BigDecimal.ZERO) <= 0) {
             throw new BadRequestException("Valor do pedido inválido.");
         }
         // Regra: Não pode pagar pedido já pago ou cancelado

@@ -1,5 +1,6 @@
 package br.unitins.topicos1.lgc.Pedido.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import br.unitins.topicos1.lgc.Pagamento.model.Pagamento;
 import br.unitins.topicos1.lgc.Usuario.model.Usuario;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -22,10 +24,13 @@ import jakarta.persistence.OneToOne;
 public class Pedido extends DefaultEntity {
 
     private LocalDateTime dataHora;
-    private Double totalPedido;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal totalPedido;
 
     // --- CAMPO ADICIONADO (Correção do Erro) ---
-    private Double valorFrete; 
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal valorFrete;
     // -------------------------------------------
 
     @ManyToOne
@@ -50,12 +55,12 @@ public class Pedido extends DefaultEntity {
     public LocalDateTime getDataHora() { return dataHora; }
     public void setDataHora(LocalDateTime dataHora) { this.dataHora = dataHora; }
 
-    public Double getTotalPedido() { return totalPedido; }
-    public void setTotalPedido(Double totalPedido) { this.totalPedido = totalPedido; }
+    public BigDecimal getTotalPedido() { return totalPedido; }
+    public void setTotalPedido(BigDecimal totalPedido) { this.totalPedido = totalPedido; }
 
     // --- GETTER E SETTER DO FRETE (Correção do Erro) ---
-    public Double getValorFrete() { return valorFrete; }
-    public void setValorFrete(Double valorFrete) { this.valorFrete = valorFrete; }
+    public BigDecimal getValorFrete() { return valorFrete; }
+    public void setValorFrete(BigDecimal valorFrete) { this.valorFrete = valorFrete; }
     // ---------------------------------------------------
 
     public Usuario getUsuario() { return usuario; }

@@ -1,11 +1,12 @@
 package br.unitins.topicos1.lgc.Pagamento.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import br.unitins.topicos1.lgc.Pagamento.model.PagamentoPix;
 
 public record PagamentoPixDTOResponse(
     Long id,
-    Double valor,
+    BigDecimal valor,
     Boolean confirmado,
     String chavePix, // A chave para o usuário pagar
     LocalDateTime dataExpiracao
