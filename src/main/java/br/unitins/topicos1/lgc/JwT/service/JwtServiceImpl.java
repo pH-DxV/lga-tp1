@@ -20,19 +20,19 @@ public class JwtServiceImpl implements JwtService {
     public String generateJwt(Usuario usuario) {
         Instant expiryDate = Instant.now().plus(EXPIRATION_TIME);
 
-        // --- ADAPTAÇÃO PARA LISTA DE PERFIS ---
         Set<String> roles = new HashSet<String>();
-        
-        // Percorre todos os perfis do usuário e adiciona na lista de "roles" (papéis)
         for (Perfil perfil : usuario.getPerfis()) {
-            roles.add(perfil.LABEL); // Ou perfil.name() se preferir "ADM"/"USER"
+            roles.add(perfil.LABEL); 
         }
 
         return Jwt.issuer("unitins-jwt")
-                .subject(usuario.getCpf()) // Pode usar o Login ou CPF como identificador principal
-                .upn(usuario.getNome()) // User Principal Name (Nome legível)
-                .groups(roles) // Define as permissões
-                .claim("id", usuario.getId()) // Guarda o ID no token (útil para o front)
+                // --- CORREÇÃO IMPORTANTE ---
+                // Usamos o LOGIN como subject, pois é isso que o SecurityService verifica.
+                .subject(usuario.getLogin()) 
+                // ---------------------------
+                .upn(usuario.getNome()) 
+                .groups(roles) 
+                .claim("id", usuario.getId()) // Garante que o ID do usuário vá no token
                 .expiresAt(expiryDate)
                 .sign();
     }

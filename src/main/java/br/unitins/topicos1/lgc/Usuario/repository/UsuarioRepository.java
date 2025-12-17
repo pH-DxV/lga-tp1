@@ -18,4 +18,10 @@ public class UsuarioRepository implements PanacheRepository<Usuario> {
         // Assumindo que o campo no banco é 'login' e 'senha'
         return find("login = ?1 AND senha = ?2", login, senha).firstResult();
     }
+
+        // --- MÉTODO ADICIONADO PARA CORRIGIR O ERRO ---
+    public Usuario findByLogin(String login) {
+        return find("login = ?1", login).firstResult();
+    }
+    // ---------------------------------------------
 }

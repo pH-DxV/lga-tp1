@@ -2,11 +2,13 @@ package br.unitins.topicos1.lgc.Pedido.resource;
 
 import java.util.List;
 
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.jboss.logging.Logger;
 
 import br.unitins.topicos1.lgc.Pedido.dto.PedidoDTO;
 import br.unitins.topicos1.lgc.Pedido.dto.PedidoDTOResponse;
 import br.unitins.topicos1.lgc.Pedido.service.PedidoService;
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -29,13 +31,28 @@ public class PedidoResource {
     @Inject
     PedidoService service;
 
+    @Inject
+    JsonWebToken jwt;
+
     private static final Logger LOG = Logger.getLogger(PedidoResource.class);
 
     @POST
     @Transactional
-    @RolesAllowed({"Administrador","Usuario"})
+    // @RolesAllowed({"Administrador","Usuario"})
+    @PermitAll
     public Response create(@Valid PedidoDTO dto) {
         LOG.info("INICIANDO METODO create");
+
+            // --- DEBUG TEMPORÁRIO ---
+    // Injetar JsonWebToken jwt; na classe antes de usar
+    if (jwt != null) {
+        LOG.info("Usuário logado: " + jwt.getName()); // Deve ser o login
+        LOG.info("Roles (groups): " + jwt.getGroups()); // Deve conter "Usuario" ou "Administrador"
+        LOG.info("Claim 'id': " + jwt.getClaim("id")); // Deve ser o ID numérico
+    } else {
+        LOG.error("JWT é nulo!");
+    }
+    // ------------------------
         PedidoDTOResponse response = service.create(dto);
         LOG.info("PEDIDO CRIADO COM SUCESSO. ID= " + response.id());
         return Response.status(Status.CREATED).entity(response).build();

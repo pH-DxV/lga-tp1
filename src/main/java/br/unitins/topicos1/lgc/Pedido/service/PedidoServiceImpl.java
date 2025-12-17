@@ -6,12 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.eclipse.microprofile.jwt.JsonWebToken;
+
 import br.unitins.topicos1.lgc.Cafe.model.Cafe;
 import br.unitins.topicos1.lgc.Cafe.repository.CafeRepository;
 import br.unitins.topicos1.lgc.Endereco.model.Endereco;
 import br.unitins.topicos1.lgc.Endereco.repository.EnderecoRepository;
-import br.unitins.topicos1.lgc.Estoque.service.EstoqueService; 
-import br.unitins.topicos1.lgc.Frete.service.FreteService; // Importe o FreteService
+import br.unitins.topicos1.lgc.Estoque.service.EstoqueService;
+import br.unitins.topicos1.lgc.Frete.service.FreteService;
 import br.unitins.topicos1.lgc.ItemPedido.dto.ItemPedidoDTO;
 import br.unitins.topicos1.lgc.ItemPedido.model.ItemPedido;
 import br.unitins.topicos1.lgc.Pedido.dto.PedidoDTO;
@@ -26,7 +28,10 @@ import br.unitins.topicos1.lgc.Usuario.repository.UsuarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.ForbiddenException; // Usado pelo SecurityService
 import jakarta.ws.rs.NotFoundException;
+
+
 
 @ApplicationScoped
 public class PedidoServiceImpl implements PedidoService {
@@ -51,37 +56,45 @@ public class PedidoServiceImpl implements PedidoService {
     
     @Inject
     SecurityService securityService;
+    
+    @Inject
+    JsonWebToken jwt;
 
     @Override
     @Transactional
     public PedidoDTOResponse create(PedidoDTO dto) {
-        // 1. Validações Iniciais
-        Usuario usuario = usuarioRepository.findById(dto.idUsuario());
-        if (usuario == null) throw new NotFoundException("Usuário não encontrado.");
+        
+        // 1. Identificação pelo Token (Substituindo o uso de dto.idUsuario())
+        String loginLogado = jwt.getName(); // Pega o login (subject) do token
+        
+        // Busca o usuário pelo login (que é único)
+        Usuario usuario = usuarioRepository.findByLogin(loginLogado);
+        if (usuario == null) throw new NotFoundException("Usuário logado não encontrado no banco.");
 
-        // Validação de Segurança
+        // Validação de Segurança (Embora já tenhamos pego do token, o securityService reforça)
         securityService.validarPermissao(usuario);
 
+        // 2. Busca e Validação do Endereço
         Endereco endereco = enderecoRepository.findById(dto.idEnderecoEntrega());
         if (endereco == null) throw new NotFoundException("Endereço não encontrado.");
 
-        // 2. Criação do Cabeçalho
+        // Validação Extra: O endereço pertence ao usuário?
+        if (!endereco.getUsuario().getId().equals(usuario.getId())) {
+             throw new ForbiddenException("O endereço informado não pertence ao usuário logado.");
+        }
+
+        // 3. Criação do Cabeçalho do Pedido
         Pedido pedido = new Pedido();
         pedido.setUsuario(usuario);
         pedido.setEnderecoEntrega(endereco);
         pedido.setDataHora(LocalDateTime.now());
         pedido.setStatus(PedidoStatus.AGUARDANDO_PAGAMENTO);
         
-        // --- CÁLCULO DO FRETE (BIGDECIMAL) ---
-        // Assumindo que o FreteService já retorna BigDecimal. 
-        // Se retornar Double, use: BigDecimal.valueOf(freteService.calcularFrete(endereco))
-        BigDecimal valorFrete = BigDecimal.valueOf(freteService.calcularFrete(endereco));
+        // Cálculo do Frete
+        BigDecimal valorFrete = freteService.calcularFrete(endereco);
         pedido.setValorFrete(valorFrete);
-        // -------------------------------------
         
         List<ItemPedido> itens = new ArrayList<>();
-        
-        // Inicializa o total com ZERO (BigDecimal)
         BigDecimal totalItens = BigDecimal.ZERO; 
 
         if (dto.itens() != null && !dto.itens().isEmpty()) {
@@ -94,28 +107,21 @@ public class PedidoServiceImpl implements PedidoService {
 
                 ItemPedido item = new ItemPedido();
                 item.setQuantidade(itemDto.quantidade());
-                
-                // O preço do café agora é BigDecimal
                 item.setPrecoUnitario(cafe.getPreco()); 
                 item.setCafe(cafe);
                 item.setPedido(pedido);
                 
                 itens.add(item);
                 
-                // --- CÁLCULO MATEMÁTICO COM BIGDECIMAL ---
-                // total += preco * quantidade
-                BigDecimal valorItem = cafe.getPreco().multiply(BigDecimal.valueOf(item.getQuantidade()));
+                BigDecimal valorItem = cafe.getPreco().multiply(new BigDecimal(item.getQuantidade()));
                 totalItens = totalItens.add(valorItem);
-                // -----------------------------------------
             }
         } else {
             throw new IllegalArgumentException("O pedido deve conter pelo menos um item.");
         }
 
         pedido.setItens(itens);
-        
-        // Soma final: Total Itens + Frete
-        pedido.setTotalPedido(totalItens.add(valorFrete));
+        pedido.setTotalPedido(totalItens.add(valorFrete)); 
 
         repository.persist(pedido);
         
@@ -135,7 +141,6 @@ public class PedidoServiceImpl implements PedidoService {
 
     @Override
     public List<PedidoDTOResponse> findAll() {
-        // Geralmente restrito a Admin no Resource
         return repository.listAll().stream()
                 .map(PedidoDTOResponse::valueOf)
                 .collect(Collectors.toList());

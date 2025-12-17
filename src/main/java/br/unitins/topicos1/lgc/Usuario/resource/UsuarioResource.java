@@ -7,7 +7,6 @@ import org.jboss.logging.Logger;
 import br.unitins.topicos1.lgc.Usuario.dto.UsuarioDTO;
 import br.unitins.topicos1.lgc.Usuario.dto.UsuarioDTOResponse;
 import br.unitins.topicos1.lgc.Usuario.service.UsuarioService;
-import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;

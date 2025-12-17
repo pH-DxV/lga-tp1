@@ -15,8 +15,8 @@ public record PedidoDTOResponse(
     Long id,
     LocalDateTime dataHora,
     BigDecimal totalPedido,
-    BigDecimal valorFrete, // <-- Campo Adicionado
-    UsuarioDTOResponse usuario,
+    BigDecimal valorFrete,
+    UsuarioDTOResponse usuario, // Mantemos o objeto completo ou o ID
     EnderecoDTOResponse enderecoEntrega,
     List<ItemPedidoDTOResponse> itens,
     PagamentoResumoDTO pagamento,
@@ -24,14 +24,15 @@ public record PedidoDTOResponse(
 ) {
     public static PedidoDTOResponse valueOf(Pedido pedido) {
         List<ItemPedidoDTOResponse> listaItens = (pedido.getItens() != null) ?
-            pedido.getItens().stream().map(ItemPedidoDTOResponse::valueOf).toList() : List.of();
+            pedido.getItens().stream().map(ItemPedidoDTOResponse::valueOf).toList() : 
+            List.of();
 
         return new PedidoDTOResponse(
             pedido.getId(),
             pedido.getDataHora(),
             pedido.getTotalPedido(),
-            pedido.getValorFrete(), // <-- Campo Adicionado
-            UsuarioDTOResponse.valueOf(pedido.getUsuario()),
+            pedido.getValorFrete(),
+            UsuarioDTOResponse.valueOf(pedido.getUsuario()), // Aqui passamos o usuário
             EnderecoDTOResponse.valueOf(pedido.getEnderecoEntrega()),
             listaItens,
             PagamentoResumoDTO.valueOf(pedido.getPagamento()),

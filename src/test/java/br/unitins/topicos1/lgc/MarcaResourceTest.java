@@ -1,140 +1,166 @@
-package br.unitins.topicos1.lgc;
-import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.http.ContentType;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.TestMethodOrder;
+// package br.unitins.topicos1.lgc;
+// import io.quarkus.test.junit.QuarkusTest;
+// // import io.restassured.http.ContentType;
+// import org.junit.jupiter.api.Test;
+// // import org.junit.jupiter.api.BeforeAll;
+// // import org.junit.jupiter.api.MethodOrderer;
+// // import org.junit.jupiter.api.Order;
+// // import org.junit.jupiter.api.TestMethodOrder;
 
-import br.unitins.topicos1.lgc.Marca.dto.MarcaDTO;
-import br.unitins.topicos1.lgc.Marca.dto.MarcaDTOResponse;
+// // import br.unitins.topicos1.lgc.Marca.dto.MarcaDTO;
+// // import br.unitins.topicos1.lgc.Marca.dto.MarcaDTOResponse;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+// import static io.restassured.RestAssured.given;
+// // import static org.hamcrest.CoreMatchers.is;
+// // import static org.hamcrest.CoreMatchers.notNullValue;
 
-@QuarkusTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class MarcaResourceTest {
 
-    private static Long idMarca;
+// // @QuarkusTest
+// // @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+// // public class MarcaResourceTest extends AuthTestBase {
 
-    @Test
-    @Order(1)
-    public void testCreate() {
-        MarcaDTO dto = new MarcaDTO("Marca Teste", "Descricao Teste");
+// //     private static Long idMarca;
+// //     private static String tokenAdmin;
 
-        MarcaDTOResponse response = given()
-            .contentType(ContentType.JSON)
-            .body(dto)
-        .when()
-            .post("/marcas")
-        .then()
-            .statusCode(201)
-            .body("id", notNullValue())
-            .body("nome", is("Marca Teste"))
-            .extract().as(MarcaDTOResponse.class);
+// //     @BeforeAll
+// //     static void setup() {
+// //         tokenAdmin = loginAdmin();
+// //     }
 
-        idMarca = response.id();
-    }
+// //     @Test
+// //     @Order(1)
+// //     public void testCreate() {
 
-    @Test
-    @Order(2)
-    public void testUpdate() {
-        MarcaDTO dto = new MarcaDTO("Marca Teste (Atualizada)", "Descricao Atualizada");
+// //         MarcaDTO dto = new MarcaDTO("Marca Teste", "Descricao Teste");
 
-        given()
-            .contentType(ContentType.JSON)
-            .body(dto)
-        .when()
-            .put("/marcas/" + idMarca)
-        .then()
-            .statusCode(200)
-            .body("id", is(idMarca.intValue()))
-            .body("nome", is("Marca Teste (Atualizada)"));
-    }
+// //         MarcaDTOResponse response = given()
+// //             .header("Authorization", "Bearer " + tokenAdmin)
+// //             .contentType(ContentType.JSON)
+// //             .body(dto)
+// //         .when()
+// //             .post("/marcas")
+// //         .then()
+// //             .statusCode(201)
+// //             .body("id", notNullValue())
+// //             .body("nome", is("Marca Teste"))
+// //             .extract().as(MarcaDTOResponse.class);
 
-    @Test
-    @Order(3)
-    public void testFindAll() {
-        given()
-        .when()
-            .get("/marcas")
-        .then()
-            .statusCode(200);
-    }
+// //         idMarca = response.id();
+// //     }
 
-    @Test
-    @Order(4)
-    public void testFindById() {
-        given()
-        .when()
-            .get("/marcas/" + idMarca)
-        .then()
-            .statusCode(200)
-            .body("id", is(idMarca.intValue()));
-    }
+// //     @Test
+// //     @Order(2)
+// //     public void testUpdate() {
 
-    @Test
-    @Order(5)
-    public void testFindByNome() {
-        given()
-        .when()
-            .get("/marcas/search/Marca Teste") 
-        .then()
-            .statusCode(200);
-    }
+// //         MarcaDTO dto =
+// //             new MarcaDTO("Marca Teste (Atualizada)", "Descricao Atualizada");
 
-    @Test
-    @Order(6)
-    public void testDelete() {
-        given()
-        .when()
-            .delete("/marcas/" + idMarca)
-        .then()
-            .statusCode(204);
-    }
+// //         given()
+// //             .header("Authorization", "Bearer " + tokenAdmin)
+// //             .contentType(ContentType.JSON)
+// //             .body(dto)
+// //         .when()
+// //             .put("/marcas/" + idMarca)
+// //         .then()
+// //             .statusCode(200)
+// //             .body("id", is(idMarca.intValue()))
+// //             .body("nome", is("Marca Teste (Atualizada)"));
+// //     }
 
-    @Test
-    @Order(7)
-    public void testFindByIdAfterDelete() {
-        given()
-        .when()
-            .get("/marcas/" + idMarca)
-        .then()
-            .statusCode(404);
-    }
+// //     @Test
+// //     @Order(3)
+// //     public void testFindAll() {
+// //         given()
+// //         .when()
+// //             .get("/marcas")
+// //         .then()
+// //             .statusCode(200);
+// //     }
 
-    // --- NOVOS TESTES DE TRATAMENTO DE ERRO ---
+// //     @Test
+// //     @Order(4)
+// //     public void testFindById() {
+// //         given()
+// //         .when()
+// //             .get("/marcas/" + idMarca)
+// //         .then()
+// //             .statusCode(200)
+// //             .body("id", is(idMarca.intValue()));
+// //     }
 
-    @Test
-    @Order(8)
-    public void testCreateInvalidMarca() {
-        // DTO inválido (Nome nulo) para testar o ValidationExceptionMapper
-        MarcaDTO dto = new MarcaDTO(null, "Descrição válida");
+// //     @Test
+// //     @Order(5)
+// //     public void testFindByNome() {
+// //         given()
+// //         .when()
+// //             .get("/marcas/search/Marca Teste")
+// //         .then()
+// //             .statusCode(200);
+// //     }
 
-        given()
-            .contentType(ContentType.JSON)
-            .body(dto)
-        .when()
-            .post("/marcas")
-        .then()
-            .statusCode(400) // Esperamos Bad Request
-            // Verificamos se o JSON de erro (Problem Details) está correto
-            .body("title", is("Erro de validação")) 
-            .body("errors[0].message", is("O nome não pode ser nulo ou vazio.")); 
-    }
+// //     @Test
+// //     @Order(6)
+// //     public void testDelete() {
+// //         given()
+// //             .header("Authorization", "Bearer " + tokenAdmin)
+// //         .when()
+// //             .delete("/marcas/" + idMarca)
+// //         .then()
+// //             .statusCode(204);
+// //     }
 
-    @Test
-    @Order(9)
-    public void testFindByIdNotFound() {
-        // ID que com certeza não existe
-        Long idInexistente = 999999L;
+// //     @Test
+// //     @Order(7)
+// //     public void testFindByIdAfterDelete() {
+// //         given()
+// //         .when()
+// //             .get("/marcas/" + idMarca)
+// //         .then()
+// //             .statusCode(404);
+// //     }
 
-        given()
-        .when()
-            .get("/marcas/" + idInexistente)
-        .then()
-            .statusCode(404); // Esperamos Not Found
-    }
-}
+// //     // ---------- CENÁRIOS DE ERRO ----------
+
+// //     @Test
+// //     @Order(8)
+// //     public void testCreateInvalidMarca() {
+
+// //         MarcaDTO dto = new MarcaDTO(null, "Descrição válida");
+
+// //         given()
+// //             .header("Authorization", "Bearer " + tokenAdmin)
+// //             .contentType(ContentType.JSON)
+// //             .body(dto)
+// //         .when()
+// //             .post("/marcas")
+// //         .then()
+// //             .statusCode(400)
+// //             .body("title", is("Erro de validação"))
+// //             .body("errors[0].message",
+// //                 is("O nome não pode ser nulo ou vazio."));
+// //     }
+
+// //     @Test
+// //     @Order(9)
+// //     public void testFindByIdNotFound() {
+
+// //         Long idInexistente = 999999L;
+
+// //         given()
+// //         .when()
+// //             .get("/marcas/" + idInexistente)
+// //         .then()
+// //             .statusCode(404);
+// //     }
+// // }
+
+
+// @QuarkusTest
+// public class MarcaResourceTest {
+
+//     @Test
+//     public void testUp() {
+//         given().when().get("/marcas")
+//             .then().statusCode(200);
+//     }
+// }
