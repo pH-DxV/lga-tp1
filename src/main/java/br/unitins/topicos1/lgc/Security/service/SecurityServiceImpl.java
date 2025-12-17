@@ -15,6 +15,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public void validarPermissao(Usuario donoDoRecurso) {
+        
         String loginLogado = jwt.getName();
         
         // Se não tiver login no token (ex: token inválido ou sem claims), bloqueia por segurança

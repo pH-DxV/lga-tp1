@@ -8,6 +8,9 @@ import org.jboss.logging.Logger;
 import br.unitins.topicos1.lgc.Pedido.dto.PedidoDTO;
 import br.unitins.topicos1.lgc.Pedido.dto.PedidoDTOResponse;
 import br.unitins.topicos1.lgc.Pedido.service.PedidoService;
+import br.unitins.topicos1.lgc.Security.service.SecurityService;
+import br.unitins.topicos1.lgc.Usuario.repository.UsuarioRepository;
+import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -26,7 +29,9 @@ import jakarta.ws.rs.core.Response.Status;
 @Path("/pedidos")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Authenticated
 public class PedidoResource {
+
 
     @Inject
     PedidoService service;
@@ -34,29 +39,26 @@ public class PedidoResource {
     @Inject
     JsonWebToken jwt;
 
+    @Inject
+    UsuarioRepository usuarioRepo;
+
+    @Inject
+    SecurityService securityService;
+
     private static final Logger LOG = Logger.getLogger(PedidoResource.class);
 
     @POST
     @Transactional
-    // @RolesAllowed({"Administrador","Usuario"})
     @PermitAll
     public Response create(@Valid PedidoDTO dto) {
         LOG.info("INICIANDO METODO create");
 
-            // --- DEBUG TEMPORÁRIO ---
-    // Injetar JsonWebToken jwt; na classe antes de usar
-    if (jwt != null) {
-        LOG.info("Usuário logado: " + jwt.getName()); // Deve ser o login
-        LOG.info("Roles (groups): " + jwt.getGroups()); // Deve conter "Usuario" ou "Administrador"
-        LOG.info("Claim 'id': " + jwt.getClaim("id")); // Deve ser o ID numérico
-    } else {
-        LOG.error("JWT é nulo!");
-    }
-    // ------------------------
         PedidoDTOResponse response = service.create(dto);
+
         LOG.info("PEDIDO CRIADO COM SUCESSO. ID= " + response.id());
         return Response.status(Status.CREATED).entity(response).build();
     }
+
 
     @GET
     @RolesAllowed({"Administrador"})

@@ -20,6 +20,8 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.NotFoundException;
 
+
+
 @ApplicationScoped
 public class EnderecoServiceImpl implements EnderecoService {
 
@@ -62,28 +64,26 @@ public class EnderecoServiceImpl implements EnderecoService {
     @Override
     @Transactional
     public EnderecoDTOResponse create(EnderecoDTO dto) {
-        // LÓGICA ATUALIZADA: O endereço é SEMPRE para o usuário logado (seja Admin ou User).
-        // Não permitimos criar endereço para terceiros.
-        
+        // LÓGICA ESTRITA: O endereço é SEMPRE para o usuário logado.
         String idToken = jwt.getClaim("id").toString();
         if (idToken == null) {
              throw new ForbiddenException("Usuário não identificado no token.");
         }
         Long idUsuarioLogado = Long.parseLong(idToken);
 
-        // Busca o usuário logado
         Usuario usuario = usuarioRepository.findById(idUsuarioLogado);
         if (usuario == null) {
             throw new NotFoundException("Usuário logado não encontrado no banco de dados.");
         }
 
-        // Busca o município
+        // Validação de Segurança
+        securityService.validarPermissao(usuario);
+
         Municipio municipio = municipioRepository.findById(dto.idMunicipio());
         if (municipio == null) {
             throw new NotFoundException("Município não encontrado.");
         }
 
-        // Cria o endereço vinculado ao usuário logado
         Endereco entity = new Endereco();
         entity.setCep(dto.cep());
         entity.setRua(dto.rua());
@@ -106,11 +106,8 @@ public class EnderecoServiceImpl implements EnderecoService {
             throw new NotFoundException("Endereço não encontrado.");
         }
 
-        // Validação de Segurança: Só o dono ou Admin pode alterar este endereço específico
         securityService.validarPermissao(entity.getUsuario());
 
-        // Regra de Negócio: Não permitimos mudar o dono do endereço no update.
-        
         Municipio municipio = municipioRepository.findById(dto.idMunicipio());
         if (municipio == null) {
             throw new NotFoundException("Município não encontrado.");
@@ -134,7 +131,6 @@ public class EnderecoServiceImpl implements EnderecoService {
             throw new NotFoundException("Endereço não encontrado.");
         }
 
-        // Validação de Segurança: Só o dono ou Admin pode deletar
         securityService.validarPermissao(entity.getUsuario());
 
         repository.delete(entity);
@@ -147,18 +143,17 @@ public class EnderecoServiceImpl implements EnderecoService {
             throw new NotFoundException("Endereço não encontrado.");
         }
         
-        // Validação de Segurança: Só o dono ou Admin pode ver os detalhes
         securityService.validarPermissao(entity.getUsuario());
 
         return EnderecoDTOResponse.valueOf(entity);
     }
     
+    // CORREÇÃO: Método adicionado na interface e implementado aqui
     @Override
     public List<EnderecoDTOResponse> findByUsuario(Long idUsuario) {
         Usuario usuario = usuarioRepository.findById(idUsuario);
         if (usuario == null) throw new NotFoundException("Usuário não encontrado.");
 
-        // Validação de Segurança: Garante que eu só vejo a MINHA lista (ou sou Admin)
         securityService.validarPermissao(usuario);
 
         return repository.findByUsuario(idUsuario).stream()

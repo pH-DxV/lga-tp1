@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.jboss.logging.Logger;
+
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import br.unitins.topicos1.lgc.Cafe.model.Cafe;
@@ -59,27 +61,59 @@ public class PedidoServiceImpl implements PedidoService {
     
     @Inject
     JsonWebToken jwt;
+    
+    // Logger para debug
+    private static final Logger LOG = Logger.getLogger(PedidoServiceImpl.class);
 
     @Override
     @Transactional
     public PedidoDTOResponse create(PedidoDTO dto) {
-        
-        // 1. Identificação pelo Token (Substituindo o uso de dto.idUsuario())
-        String loginLogado = jwt.getName(); // Pega o login (subject) do token
-        
-        // Busca o usuário pelo login (que é único)
-        Usuario usuario = usuarioRepository.findByLogin(loginLogado);
-        if (usuario == null) throw new NotFoundException("Usuário logado não encontrado no banco.");
+        LOG.info("Iniciando criação de pedido...");
 
-        // Validação de Segurança (Embora já tenhamos pego do token, o securityService reforça)
+        // Debug: Imprime todas as claims do token para ver o que está chegando
+        LOG.info("Claims do Token: " + jwt.getClaimNames());
+
+        // 1. Identificação pelo Token
+        Object claimId = jwt.getClaim("id");
+        
+        if (claimId == null) {
+             LOG.error("ERRO: Claim 'id' não encontrado no token. Claims disponíveis: " + jwt.getClaimNames());
+             throw new ForbiddenException("Usuário não identificado no token (Claim 'id' ausente). Por favor, faça login novamente.");
+        }
+        
+        Long idUsuarioLogado;
+        try {
+            idUsuarioLogado = Long.parseLong(claimId.toString());
+        } catch (NumberFormatException e) {
+            LOG.error("ERRO: Claim 'id' não é um número válido: " + claimId);
+            throw new ForbiddenException("Erro ao processar identificação do usuário.");
+        }
+
+        LOG.info("Usuário identificado pelo token. ID: " + idUsuarioLogado);
+
+        // Busca o usuário
+        Usuario usuario = usuarioRepository.findById(idUsuarioLogado);
+        if (usuario == null) {
+            LOG.error("ERRO: Usuário com ID " + idUsuarioLogado + " não encontrado no banco.");
+            throw new NotFoundException("Usuário não encontrado.");
+        }
+        LOG.info("Usuário encontrado no banco: " + usuario.getNome());
+
+        // Validação de Segurança
         securityService.validarPermissao(usuario);
 
         // 2. Busca e Validação do Endereço
+        LOG.info("Buscando endereço ID: " + dto.idEnderecoEntrega());
         Endereco endereco = enderecoRepository.findById(dto.idEnderecoEntrega());
-        if (endereco == null) throw new NotFoundException("Endereço não encontrado.");
-
-        // Validação Extra: O endereço pertence ao usuário?
+        if (endereco == null) {
+            LOG.error("ERRO: Endereço com ID " + dto.idEnderecoEntrega() + " não encontrado.");
+            throw new NotFoundException("Endereço não encontrado.");
+        }
+        LOG.info("Endereço encontrado.");
+        
+        // Regra extra
         if (!endereco.getUsuario().getId().equals(usuario.getId())) {
+             LOG.error("ERRO: Endereço pertence ao usuário " + endereco.getUsuario().getId() + ", mas quem pede é " + usuario.getId());
              throw new ForbiddenException("O endereço informado não pertence ao usuário logado.");
         }
 
@@ -93,14 +127,19 @@ public class PedidoServiceImpl implements PedidoService {
         // Cálculo do Frete
         BigDecimal valorFrete = freteService.calcularFrete(endereco);
         pedido.setValorFrete(valorFrete);
+        LOG.info("Frete calculado: " + valorFrete);
         
         List<ItemPedido> itens = new ArrayList<>();
         BigDecimal totalItens = BigDecimal.ZERO; 
 
         if (dto.itens() != null && !dto.itens().isEmpty()) {
             for (ItemPedidoDTO itemDto : dto.itens()) {
+                LOG.info("Processando item. Café ID: " + itemDto.idCafe());
                 Cafe cafe = cafeRepository.findById(itemDto.idCafe());
-                if (cafe == null) throw new NotFoundException("Café não encontrado (ID: " + itemDto.idCafe() + ")");
+                if (cafe == null) {
+                    LOG.error("ERRO: Café com ID " + itemDto.idCafe() + " não encontrado.");
+                    throw new NotFoundException("Café não encontrado (ID: " + itemDto.idCafe() + ")");
+                }
 
                 // Baixa de estoque
                 estoqueService.baixarEstoque(cafe.getId(), itemDto.quantidade());
@@ -124,6 +163,7 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setTotalPedido(totalItens.add(valorFrete)); 
 
         repository.persist(pedido);
+        LOG.info("Pedido salvo com sucesso. ID: " + pedido.getId());
         
         return PedidoDTOResponse.valueOf(pedido);
     }
@@ -151,7 +191,6 @@ public class PedidoServiceImpl implements PedidoService {
         Usuario usuarioSolicitado = usuarioRepository.findById(idUsuario);
         if (usuarioSolicitado == null) throw new NotFoundException("Usuário não encontrado.");
 
-        // Validação de Segurança
         securityService.validarPermissao(usuarioSolicitado);
 
         return repository.findByUsuario(idUsuario).stream()

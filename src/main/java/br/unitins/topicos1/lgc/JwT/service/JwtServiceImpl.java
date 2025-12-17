@@ -26,13 +26,10 @@ public class JwtServiceImpl implements JwtService {
         }
 
         return Jwt.issuer("unitins-jwt")
-                // --- CORREÇÃO IMPORTANTE ---
-                // Usamos o LOGIN como subject, pois é isso que o SecurityService verifica.
-                .subject(usuario.getLogin()) 
-                // ---------------------------
-                .upn(usuario.getNome()) 
+                .subject(usuario.getLogin()) // Subject é o login
+                .upn(usuario.getLogin())     // <--- CORREÇÃO: UPN deve ser o login para bater com jwt.getName()
                 .groups(roles) 
-                .claim("id", usuario.getId()) // Garante que o ID do usuário vá no token
+                .claim("id", usuario.getId()) 
                 .expiresAt(expiryDate)
                 .sign();
     }
