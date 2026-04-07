@@ -8,7 +8,7 @@ import { Estado } from '../models/estado'
 })
 export class EstadoService {
 
-  private apiUrl = 'http://localhost:8080/estados'
+  private apiUrl = 'http://localhost:8080/estados' // <-- verificar a nomenclatura
 
   constructor(private http: HttpClient) {}
 

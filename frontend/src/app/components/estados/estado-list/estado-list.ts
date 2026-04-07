@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { EstadoService } from '../../../services/estado.service'
+import { Estado } from '../../../models/estado'
 
 @Component({
   selector: 'app-estado-list',
