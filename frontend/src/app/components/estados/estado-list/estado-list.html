@@ -1,2 +1,5 @@
-<h2>Lista de Estados</h2>
-<p>Funcionando!</p>
+<ul>
+  <li *ngFor="let estado of estados">
+    {{ estado.nome }} - {{ estado.sigla }} - {{ estado.regiao.nome }}
+  </li>
+</ul>
