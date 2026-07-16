@@ -43,3 +43,10 @@ nb-configuration.xml
 /.quarkus/cli/plugins/
 # TLS Certificates
 .certs/
+
+#Ignorar arquivos de log individuais
+*.log
+log_erro.txt
+
+#Ignorar pastas de log (caso seu sistema crie alguma pasta de logs)
+/logs/
