@@ -1,4 +1,4 @@
-import { Regiao } from './regiao';
+import { Regiao } from './regiao.model';
 
 export class Estado {
 

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { EstadoService } from '../../../services/estado.service';
-import { Estado } from '../../../models/estado';
+import { Estado } from '../../../models/estado.model';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -47,4 +47,18 @@ export class EstadoListComponent {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
+
+  excluir(id: number): void {
+    this.estadoService.delete(id).subscribe({
+      next: () => {
+        this.dataSource.data = this.dataSource.data.filter(
+          estado => estado.id !== id
+        );
+      },
+      error: (error) => {
+        console.error('Erro ao excluir estado:', error);
+      }
+    });
+  }
+
 }

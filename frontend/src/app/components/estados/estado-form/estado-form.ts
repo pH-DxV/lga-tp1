@@ -12,7 +12,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { EstadoService } from '../../../services/estado.service';
-import { Estado } from '../../../models/estado';
+import { Estado } from '../../../models/estado.model';
+import { Regiao } from '../../../models/regiao.model';
+import { RegiaoService } from '../../../services/regiao.service';
 
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -37,9 +39,12 @@ export class EstadoFormComponent implements OnInit {
   readonly form: FormGroup;
   private readonly location = inject(Location);
 
+  regioes: Regiao[] = [];
+
   constructor(
     private fb: FormBuilder,
     private estadoService: EstadoService,
+    private regiaoService: RegiaoService,
     private activatedRoute: ActivatedRoute,
     private snack: MatSnackBar,
     private router: Router
@@ -59,6 +64,21 @@ export class EstadoFormComponent implements OnInit {
     if (estado) {
       this.form.patchValue(estado);
     }
+
+    this.regiaoService.findAll().subscribe({
+      next: (regioes) => {
+        this.regioes = regioes;
+
+        if (estado) {
+          this.form.patchValue({
+            idRegiao: estado.regiao.id
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao buscar regiões:', error);
+      }
+    });
   }
 
   salvar() {
