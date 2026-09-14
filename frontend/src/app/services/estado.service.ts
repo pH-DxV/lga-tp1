@@ -15,4 +15,10 @@ export class EstadoService {
   findAll(): Observable<Estado[]> {
     return this.http.get<Estado[]>(this.apiUrl)
   }
+
+  findById(id: any): Observable<Estado> {
+    const url = `${this.apiUrl}/${id}`;
+    return this.http.get<Estado>(url); 
+  }
+
 }

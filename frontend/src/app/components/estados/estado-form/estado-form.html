@@ -1,0 +1,57 @@
+<mat-toolbar class="toolbar-title" color="primary">
+    Controle de Estados
+</mat-toolbar>
+
+<mat-card class="card">
+    <mat-card-content>
+        <form class="form" [formGroup]="form">
+            <div class="grid">
+
+                <!-- Nome -->
+                <mat-form-field appearance="outline" class="full-width-input">
+                    <mat-label>Nome</mat-label>
+                    <input matInput formControlName="nome" placeholder="Ex.: Tocantins" />
+                </mat-form-field>
+
+                <!-- Sigla -->
+                <mat-form-field appearance="outline" class="full-width-input">
+                    <mat-label>Sigla (UF)</mat-label>
+                    <input matInput formControlName="sigla" maxlength="2" placeholder="Ex.: TO" />
+                </mat-form-field>
+                <!-- Regiao -->
+                <mat-form-field appearance="outline" class="full-width-input">
+                    <mat-label>Região</mat-label>
+                    <mat-select formControlName="idRegiao" placeholder="Selecione uma região">
+                        @for (regiao of regioes; track regiao.id) {
+                            <mat-option [value]="regiao.id">{{regiao.nome}}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="actions">
+                <button mat-raised-button 
+                    color="warn" 
+                    (click)="excluir()" 
+                    [disabled]="!form.value.id">
+                    <mat-icon>delete</mat-icon>
+                    Excluir
+                </button>
+
+                <button mat-raised-button (click)="voltar()">
+                    <mat-icon>arrow_back</mat-icon>
+                    Cancelar
+                </button>
+
+                <button mat-raised-button 
+                    color="primary" 
+                    (click)="salvar()" 
+                    [disabled]="form.invalid">
+                    <mat-icon>save</mat-icon>
+                    Salvar
+                </button>
+            </div>
+
+        </form>
+    </mat-card-content>
+</mat-card>
