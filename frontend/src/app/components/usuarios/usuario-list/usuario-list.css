@@ -1,0 +1,40 @@
+.toolbar-title {
+    flex: 1;
+    text-align: center;
+}
+
+.flex-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.mat-column-numero {
+    width: 5em;
+    border-right: 1px solid currentColor;
+    padding-right: 24px;
+    text-align: center;
+}
+
+.mat-column-nome {
+    width: 35%;
+}
+
+.mat-column-login {
+    width: 20%;
+}
+
+.mat-column-cpf {
+    text-align: center;
+    width: 15%;
+}
+
+.mat-column-perfil {
+    text-align: center;
+    width: 15%;
+}
+
+.mat-column-acao {
+    text-align: center;
+    min-width: 10em;
+}

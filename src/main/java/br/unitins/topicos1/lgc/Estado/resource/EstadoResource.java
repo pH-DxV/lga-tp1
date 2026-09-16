@@ -57,7 +57,7 @@ public class EstadoResource {
 
     @POST
     @Transactional // Adicionado
-    // @RolesAllowed({"Administrador"}) <-- DESCOMENTAR POSTERIORMENTE
+    @RolesAllowed({"Administrador"})
     public Response incluir(EstadoDTO dto) {
         LOG.info("INICIANDO METODO create [ ADM ACESS ]");
         EstadoDTOResponse response = service.create(dto);
@@ -68,8 +68,7 @@ public class EstadoResource {
     @PUT
     @Path("/{id}")
     @Transactional // Adicionado
-    // @RolesAllowed({"Administrador"}) <-- DESCOMENTAR POSTERIORMENTE
-    public Response alterar(@PathParam("id") Long id, EstadoDTO dto) { // Corrigido
+    @RolesAllowed({"Administrador"})    public Response alterar(@PathParam("id") Long id, EstadoDTO dto) { // Corrigido
         LOG.info("INICIANDO METODO update PARA O ESTADO: " + id + " [ ADM ACESS ]");
         // Corrigido para retornar o objeto atualizado (200 OK)
         EstadoDTOResponse response = service.update(id, dto);
@@ -79,7 +78,7 @@ public class EstadoResource {
     @DELETE
     @Path("/{id}")
     @Transactional // Adicionado
-    // @RolesAllowed({"Administrador"}) <-- DESCOMENTAR POSTERIORMENTE
+    @RolesAllowed({"Administrador"})
     public Response apagar(@PathParam("id") Long id) { // Corrigido
         LOG.warn("INICIANDO METODO delete PARA ESTADO: " + id + " [ ADM ACESS ]");
         service.delete(id);
