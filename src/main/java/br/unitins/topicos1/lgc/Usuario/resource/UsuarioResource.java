@@ -33,7 +33,6 @@ public class UsuarioResource {
     private static final Logger LOG = Logger.getLogger(UsuarioResource.class);
 
     @GET
-    @RolesAllowed("Administrador")
     public Response buscarTodos() { // Corrigido
         LOG.info("LISTANDO TODOS OS USUARIOS [ ADM ACESS ]");
         List<UsuarioDTOResponse> lista = service.findAll();
@@ -44,7 +43,6 @@ public class UsuarioResource {
     // Adicionado o findById (essencial)
     @GET
     @Path("/{id}")
-    @RolesAllowed("Administrador")
     public Response findById(@PathParam("id") Long id) {
         LOG.info("BUSCANDO OS DETALHES DO USUARIO: " + id + " POR ID [ ADM ACESS ]");
         return Response.ok(service.findById(id)).build();
@@ -52,7 +50,6 @@ public class UsuarioResource {
 
     @GET
     @Path("/find/{nome}")
-    @RolesAllowed("Administrador")
     public Response buscarPorNome(@PathParam("nome") String nome) { // Corrigido
         LOG.info("BUSCANDO POR NOME: '"+ nome + "' [ ADM ACESS ]");
         List<UsuarioDTOResponse> lista = service.findByNome(nome);
@@ -61,7 +58,6 @@ public class UsuarioResource {
 
     @POST
     @Transactional // Adicionado
-    @RolesAllowed("Administrador")
     public Response incluir(UsuarioDTO dto) { // Corrigido
         LOG.info("INICIANDO METODO create [ ADM ACESS ]");
         UsuarioDTOResponse retorno = service.create(dto);
@@ -71,7 +67,6 @@ public class UsuarioResource {
     @PUT
     @Path("/{id}")
     @Transactional // Adicionado
-    @RolesAllowed("Administrador")
     public Response alterar(@PathParam("id") Long id, UsuarioDTO dto) { // Corrigido
         LOG.info("INICIANDO METODO update PARA USUARIO: " + id + "[ ADM ACESS ]");
         UsuarioDTOResponse retorno = service.update(id, dto);
@@ -81,7 +76,7 @@ public class UsuarioResource {
     @DELETE
     @Path("/{id}")
     @Transactional // Adicionado
-    @RolesAllowed("Administrador")
+    // @RolesAllowed("Administrador")
     public Response apagar(@PathParam("id") Long id) { // Corrigido
         LOG.warn("INICIANDO METODO delete PARA USUARIO: "+ id);
         service.delete(id);

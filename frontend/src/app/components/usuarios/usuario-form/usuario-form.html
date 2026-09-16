@@ -1,0 +1,207 @@
+<mat-toolbar class="toolbar-title">
+    Controle de Usuários
+</mat-toolbar>
+
+<mat-card class="card">
+
+    <mat-card-content>
+
+        <form [formGroup]="form">
+
+            <mat-form-field appearance="outline">
+                <mat-label>Nome</mat-label>
+                <input matInput formControlName="nome">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Login</mat-label>
+                <input matInput formControlName="login">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Senha</mat-label>
+                <input matInput type="password" formControlName="senha">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>CPF</mat-label>
+                <input matInput formControlName="cpf" maxlength="11">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+                <mat-label>Data de nascimento</mat-label>
+                <input matInput type="date" formControlName="dataNascimento">
+            </mat-form-field>
+
+            <!-- PERFIL -->
+
+            <mat-form-field appearance="outline">
+                <mat-label>Perfil</mat-label>
+
+                <mat-select formControlName="idPerfil">
+
+                    <mat-option [value]="1">
+                        Administrador
+                    </mat-option>
+
+                    <mat-option [value]="2">
+                        Usuário
+                    </mat-option>
+
+                </mat-select>
+
+            </mat-form-field>
+
+            <!-- TELEFONES -->
+
+            <h3>Telefones</h3>
+
+            <div formArrayName="telefones">
+
+                @for (telefone of telefones.controls; track $index) {
+
+                    <div [formGroupName]="$index" class="item">
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>DDD</mat-label>
+                            <input matInput formControlName="ddd" maxlength="2">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Número</mat-label>
+                            <input matInput formControlName="numero">
+                        </mat-form-field>
+
+                        <button
+                            mat-icon-button
+                            color="warn"
+                            type="button"
+                            (click)="removerTelefone($index)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+
+                    </div>
+
+                }
+
+            </div>
+
+            <button
+                mat-raised-button
+                type="button"
+                (click)="adicionarTelefone()">
+
+                <mat-icon>add</mat-icon>
+                Adicionar telefone
+
+            </button>
+
+
+            <!-- ENDEREÇOS -->
+
+            <h3>Endereço</h3>
+
+            <div formArrayName="enderecos">
+
+                @for (endereco of enderecos.controls; track $index) {
+
+                    <div [formGroupName]="$index">
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>CEP</mat-label>
+                            <input matInput formControlName="cep">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Rua</mat-label>
+                            <input matInput formControlName="rua">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Número</mat-label>
+                            <input matInput formControlName="numero">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Complemento</mat-label>
+                            <input matInput formControlName="complemento">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Bairro</mat-label>
+                            <input matInput formControlName="bairro">
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>ID do Município</mat-label>
+                            <input matInput type="number" formControlName="idMunicipio">
+                        </mat-form-field>
+
+                        <button
+                            mat-icon-button
+                            color="warn"
+                            type="button"
+                            (click)="removerEndereco($index)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+
+                    </div>
+
+                }
+
+            </div>
+
+            <button
+                mat-raised-button
+                type="button"
+                (click)="adicionarEndereco()">
+
+                <mat-icon>add</mat-icon>
+                Adicionar endereço
+
+            </button>
+
+            <!-- AÇÕES -->
+
+            <div class="actions">
+
+                <button
+                    mat-raised-button
+                    color="warn"
+                    type="button"
+                    (click)="excluir()"
+                    [disabled]="!form.value.id">
+
+                    <mat-icon>delete</mat-icon>
+                    Excluir
+
+                </button>
+
+                <button
+                    mat-raised-button
+                    type="button"
+                    (click)="voltar()">
+
+                    <mat-icon>arrow_back</mat-icon>
+                    Cancelar
+
+                </button>
+
+                <button
+                    mat-raised-button
+                    color="primary"
+                    type="button"
+                    (click)="salvar()">
+
+                    <mat-icon>save</mat-icon>
+                    Salvar
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </mat-card-content>
+
+</mat-card>

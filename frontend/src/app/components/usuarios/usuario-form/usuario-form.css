@@ -1,0 +1,43 @@
+.toolbar-title {
+    display: flex;
+    justify-content: center;
+    font-size: x-large;
+}
+
+.card {
+    max-width: 900px;
+    margin: 2rem auto;
+}
+
+mat-form-field {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.item mat-form-field {
+    flex: 1;
+}
+
+h3 {
+    margin-top: 25px;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    margin-top: 30px;
+}
+
+.actions button[color="warn"] {
+    margin-right: auto;
+}
+
+.actions button:not(:last-child) {
+    margin-right: 10px;
+}
