@@ -50,4 +50,17 @@ export class UsuarioListComponent {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
+
+  excluir(id: number): void {
+  this.usuarioService.delete(id).subscribe({
+    next: () => {
+      this.dataSource.data = this.dataSource.data.filter(
+        usuario => usuario.id !== id
+      );
+    },
+    error: (error) => {
+      console.error('Erro ao excluir usuário:', error);
+    }
+  });
+}
 }

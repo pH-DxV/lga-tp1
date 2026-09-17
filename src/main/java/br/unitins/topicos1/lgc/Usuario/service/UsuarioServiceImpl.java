@@ -32,6 +32,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Inject
     HashService hashService; // Injeta o serviço de criptografia
 
+    @Inject 
     MunicipioRepository municipioRepository; // Necessário para buscar município
 
     @Override

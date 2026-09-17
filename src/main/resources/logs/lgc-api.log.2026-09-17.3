@@ -1,0 +1,154 @@
+16-09-2026 17:28:16 WARN  [io.qu.config] (Quarkus Main Thread) The "quarkus.log.file.enable" config property is deprecated and should not be used anymore.
+16-09-2026 17:28:16 WARN  [io.qu.config] (Quarkus Main Thread) The "quarkus.hibernate-orm.database.generation" config property is deprecated and should not be used anymore.
+16-09-2026 17:28:16 WARN  [io.qu.config] (Quarkus Main Thread) The "quarkus.http.cors" config property is deprecated and should not be used anymore.
+16-09-2026 17:28:17 INFO  [io.quarkus] (Quarkus Main Thread) lgc-api-tp1 1.0.0-SNAPSHOT on JVM (powered by Quarkus 3.26.3) started in 1.388s. Listening on: http://localhost:8080
+16-09-2026 17:28:17 INFO  [io.quarkus] (Quarkus Main Thread) Profile dev activated. Live Coding activated.
+16-09-2026 17:28:17 INFO  [io.quarkus] (Quarkus Main Thread) Installed features: [agroal, cdi, hibernate-orm, hibernate-orm-panache, hibernate-validator, jdbc-postgresql, narayana-jta, rest, rest-jackson, security, smallrye-context-propagation, smallrye-jwt, smallrye-openapi, swagger-ui, vertx]
+16-09-2026 17:28:17 INFO  [io.qu.de.de.RuntimeUpdatesProcessor] (vert.x-worker-thread-1) Live reload total time: 2.176s 
+16-09-2026 17:28:17 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) LISTANDO TODOS OS USUARIOS [ ADM ACESS ]
+16-09-2026 17:28:17 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) TOTAL DE USUARIOS RETORNADOS: 2
+16-09-2026 17:28:17 INFO  [io.qu.de.de.RuntimeUpdatesProcessor] (vert.x-worker-thread-3) Files changed but restart not needed - notified extensions in: 0.084s 
+16-09-2026 17:28:17 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) LISTANDO TODOS OS USUARIOS [ ADM ACESS ]
+16-09-2026 17:28:17 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) TOTAL DE USUARIOS RETORNADOS: 2
+16-09-2026 17:31:58 INFO  [io.qu.de.de.RuntimeUpdatesProcessor] (vert.x-worker-thread-3) Files changed but restart not needed - notified extensions in: 0.027s 
+16-09-2026 17:31:58 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) LISTANDO TODOS OS USUARIOS [ ADM ACESS ]
+16-09-2026 17:31:58 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) TOTAL DE USUARIOS RETORNADOS: 2
+16-09-2026 17:31:58 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) LISTANDO TODOS OS USUARIOS [ ADM ACESS ]
+16-09-2026 17:31:58 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) TOTAL DE USUARIOS RETORNADOS: 2
+16-09-2026 17:38:07 INFO  [io.qu.de.de.RuntimeUpdatesProcessor] (vert.x-worker-thread-3) Files changed but restart not needed - notified extensions in: 0.039s 
+16-09-2026 17:38:07 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) LISTANDO TODOS OS USUARIOS [ ADM ACESS ]
+16-09-2026 17:38:07 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) TOTAL DE USUARIOS RETORNADOS: 2
+16-09-2026 17:38:07 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) LISTANDO TODOS OS USUARIOS [ ADM ACESS ]
+16-09-2026 17:38:07 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) TOTAL DE USUARIOS RETORNADOS: 2
+16-09-2026 17:42:45 INFO  [io.qu.de.de.RuntimeUpdatesProcessor] (vert.x-worker-thread-3) Files changed but restart not needed - notified extensions in: 0.034s 
+16-09-2026 17:42:45 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) LISTANDO TODOS OS USUARIOS [ ADM ACESS ]
+16-09-2026 17:42:45 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) TOTAL DE USUARIOS RETORNADOS: 2
+16-09-2026 17:42:45 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) LISTANDO TODOS OS USUARIOS [ ADM ACESS ]
+16-09-2026 17:42:45 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) TOTAL DE USUARIOS RETORNADOS: 2
+16-09-2026 17:43:40 INFO  [io.qu.de.de.RuntimeUpdatesProcessor] (vert.x-worker-thread-3) Files changed but restart not needed - notified extensions in: 0.023s 
+16-09-2026 17:43:40 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) INICIANDO METODO create [ ADM ACESS ]
+16-09-2026 17:43:40 ERROR [io.qu.ve.ht.ru.QuarkusErrorHandler] (executor-thread-1) HTTP Request to /usuarios failed, error id: 68abc04c-9ca7-4ac1-a75e-479987c25b90-1
+
+Exception in UsuarioServiceImpl.java:58
+	  56  
+	  57          // Perfil (Definido pelo DTO, pois é criação administrativa)
+	→ 58          entity.setPerfis(Set.of(Perfil.valueOf(dto.idPerfil().longValue())));
+	  59  
+	  60          entity.setDataNascimento(dto.dataNascimento());
+
+Exception in UsuarioResource.java:63
+	  61      public Response incluir(UsuarioDTO dto) { // Corrigido
+	  62          LOG.info("INICIANDO METODO create [ ADM ACESS ]");
+	→ 63          UsuarioDTOResponse retorno = service.create(dto);
+	  64          return Response.status(Status.CREATED).entity(retorno).build();
+	  65      }: java.lang.NullPointerException: Cannot invoke "java.lang.Integer.longValue()" because the return value of "br.unitins.topicos1.lgc.Usuario.dto.UsuarioDTO.idPerfil()" is null
+	at br.unitins.topicos1.lgc.Usuario.service.UsuarioServiceImpl.create(UsuarioServiceImpl.java:58)
+	at br.unitins.topicos1.lgc.Usuario.service.UsuarioServiceImpl_Subclass.create$$superforward(Unknown Source)
+	at br.unitins.topicos1.lgc.Usuario.service.UsuarioServiceImpl_Subclass$$function$$3.apply(Unknown Source)
+	at io.quarkus.arc.impl.AroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:73)
+	at io.quarkus.arc.impl.AroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:62)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorBase.invokeInCallerTx(TransactionalInterceptorBase.java:335)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorRequired.doIntercept(TransactionalInterceptorRequired.java:40)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorBase.intercept(TransactionalInterceptorBase.java:61)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorRequired.intercept(TransactionalInterceptorRequired.java:32)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorRequired_Bean.intercept(Unknown Source)
+	at io.quarkus.arc.impl.InterceptorInvocation.invoke(InterceptorInvocation.java:42)
+	at io.quarkus.arc.impl.AroundInvokeInvocationContext.perform(AroundInvokeInvocationContext.java:30)
+	at io.quarkus.arc.impl.InvocationContexts.performAroundInvoke(InvocationContexts.java:27)
+	at br.unitins.topicos1.lgc.Usuario.service.UsuarioServiceImpl_Subclass.create(Unknown Source)
+	at br.unitins.topicos1.lgc.Usuario.service.UsuarioServiceImpl_ClientProxy.create(Unknown Source)
+	at br.unitins.topicos1.lgc.Usuario.resource.UsuarioResource.incluir(UsuarioResource.java:63)
+	at br.unitins.topicos1.lgc.Usuario.resource.UsuarioResource_Subclass.incluir$$superforward(Unknown Source)
+	at br.unitins.topicos1.lgc.Usuario.resource.UsuarioResource_Subclass$$function$$9.apply(Unknown Source)
+	at io.quarkus.arc.impl.AroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:73)
+	at io.quarkus.arc.impl.AroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:62)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorBase.invokeInOurTx(TransactionalInterceptorBase.java:136)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorBase.invokeInOurTx(TransactionalInterceptorBase.java:107)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorRequired.doIntercept(TransactionalInterceptorRequired.java:38)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorBase.intercept(TransactionalInterceptorBase.java:61)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorRequired.intercept(TransactionalInterceptorRequired.java:32)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorRequired_Bean.intercept(Unknown Source)
+	at io.quarkus.arc.impl.InterceptorInvocation.invoke(InterceptorInvocation.java:42)
+	at io.quarkus.arc.impl.AroundInvokeInvocationContext.perform(AroundInvokeInvocationContext.java:30)
+	at io.quarkus.arc.impl.InvocationContexts.performAroundInvoke(InvocationContexts.java:27)
+	at br.unitins.topicos1.lgc.Usuario.resource.UsuarioResource_Subclass.incluir(Unknown Source)
+	at br.unitins.topicos1.lgc.Usuario.resource.UsuarioResource$quarkusrestinvoker$incluir_30b27f1a8f5c5be94a94629ba9e3a804cb096a5b.invoke(Unknown Source)
+	at org.jboss.resteasy.reactive.server.handlers.InvocationHandler.handle(InvocationHandler.java:29)
+	at io.quarkus.resteasy.reactive.server.runtime.QuarkusResteasyReactiveRequestContext.invokeHandler(QuarkusResteasyReactiveRequestContext.java:183)
+	at org.jboss.resteasy.reactive.common.core.AbstractResteasyReactiveContext.run(AbstractResteasyReactiveContext.java:147)
+	at io.quarkus.vertx.core.runtime.VertxCoreRecorder$15.runWith(VertxCoreRecorder.java:645)
+	at org.jboss.threads.EnhancedQueueExecutor$Task.doRunWith(EnhancedQueueExecutor.java:2651)
+	at org.jboss.threads.EnhancedQueueExecutor$Task.run(EnhancedQueueExecutor.java:2630)
+	at org.jboss.threads.EnhancedQueueExecutor.runThreadBody(EnhancedQueueExecutor.java:1622)
+	at org.jboss.threads.EnhancedQueueExecutor$ThreadBody.run(EnhancedQueueExecutor.java:1589)
+	at org.jboss.threads.DelegatingRunnable.run(DelegatingRunnable.java:11)
+	at org.jboss.threads.ThreadLocalResettingRunnable.run(ThreadLocalResettingRunnable.java:11)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+16-09-2026 17:49:27 INFO  [io.qu.de.de.RuntimeUpdatesProcessor] (vert.x-worker-thread-3) Files changed but restart not needed - notified extensions in: 0.028s 
+16-09-2026 17:49:27 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) INICIANDO METODO create [ ADM ACESS ]
+16-09-2026 17:49:27 ERROR [io.qu.ve.ht.ru.QuarkusErrorHandler] (executor-thread-1) HTTP Request to /usuarios failed, error id: 68abc04c-9ca7-4ac1-a75e-479987c25b90-2
+
+Exception in UsuarioServiceImpl.java:76
+	  74          List<Endereco> enderecos = new ArrayList<>();
+	  75          for (EnderecoDTO endDto : dto.enderecos()) {
+	→ 76              Municipio municipio = municipioRepository.findById(endDto.idMunicipio());
+	  77              if (municipio == null) {
+	  78                  throw new NotFoundException("Município não encontrado (ID: " + endDto.idMunicipio() + ")");
+
+Exception in UsuarioResource.java:63
+	  61      public Response incluir(UsuarioDTO dto) { // Corrigido
+	  62          LOG.info("INICIANDO METODO create [ ADM ACESS ]");
+	→ 63          UsuarioDTOResponse retorno = service.create(dto);
+	  64          return Response.status(Status.CREATED).entity(retorno).build();
+	  65      }: java.lang.NullPointerException: Cannot invoke "br.unitins.topicos1.lgc.Municipio.repository.MunicipioRepository.findById(Object)" because "this.municipioRepository" is null
+	at br.unitins.topicos1.lgc.Usuario.service.UsuarioServiceImpl.create(UsuarioServiceImpl.java:76)
+	at br.unitins.topicos1.lgc.Usuario.service.UsuarioServiceImpl_Subclass.create$$superforward(Unknown Source)
+	at br.unitins.topicos1.lgc.Usuario.service.UsuarioServiceImpl_Subclass$$function$$3.apply(Unknown Source)
+	at io.quarkus.arc.impl.AroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:73)
+	at io.quarkus.arc.impl.AroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:62)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorBase.invokeInCallerTx(TransactionalInterceptorBase.java:335)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorRequired.doIntercept(TransactionalInterceptorRequired.java:40)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorBase.intercept(TransactionalInterceptorBase.java:61)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorRequired.intercept(TransactionalInterceptorRequired.java:32)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorRequired_Bean.intercept(Unknown Source)
+	at io.quarkus.arc.impl.InterceptorInvocation.invoke(InterceptorInvocation.java:42)
+	at io.quarkus.arc.impl.AroundInvokeInvocationContext.perform(AroundInvokeInvocationContext.java:30)
+	at io.quarkus.arc.impl.InvocationContexts.performAroundInvoke(InvocationContexts.java:27)
+	at br.unitins.topicos1.lgc.Usuario.service.UsuarioServiceImpl_Subclass.create(Unknown Source)
+	at br.unitins.topicos1.lgc.Usuario.service.UsuarioServiceImpl_ClientProxy.create(Unknown Source)
+	at br.unitins.topicos1.lgc.Usuario.resource.UsuarioResource.incluir(UsuarioResource.java:63)
+	at br.unitins.topicos1.lgc.Usuario.resource.UsuarioResource_Subclass.incluir$$superforward(Unknown Source)
+	at br.unitins.topicos1.lgc.Usuario.resource.UsuarioResource_Subclass$$function$$9.apply(Unknown Source)
+	at io.quarkus.arc.impl.AroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:73)
+	at io.quarkus.arc.impl.AroundInvokeInvocationContext.proceed(AroundInvokeInvocationContext.java:62)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorBase.invokeInOurTx(TransactionalInterceptorBase.java:136)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorBase.invokeInOurTx(TransactionalInterceptorBase.java:107)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorRequired.doIntercept(TransactionalInterceptorRequired.java:38)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorBase.intercept(TransactionalInterceptorBase.java:61)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorRequired.intercept(TransactionalInterceptorRequired.java:32)
+	at io.quarkus.narayana.jta.runtime.interceptor.TransactionalInterceptorRequired_Bean.intercept(Unknown Source)
+	at io.quarkus.arc.impl.InterceptorInvocation.invoke(InterceptorInvocation.java:42)
+	at io.quarkus.arc.impl.AroundInvokeInvocationContext.perform(AroundInvokeInvocationContext.java:30)
+	at io.quarkus.arc.impl.InvocationContexts.performAroundInvoke(InvocationContexts.java:27)
+	at br.unitins.topicos1.lgc.Usuario.resource.UsuarioResource_Subclass.incluir(Unknown Source)
+	at br.unitins.topicos1.lgc.Usuario.resource.UsuarioResource$quarkusrestinvoker$incluir_30b27f1a8f5c5be94a94629ba9e3a804cb096a5b.invoke(Unknown Source)
+	at org.jboss.resteasy.reactive.server.handlers.InvocationHandler.handle(InvocationHandler.java:29)
+	at io.quarkus.resteasy.reactive.server.runtime.QuarkusResteasyReactiveRequestContext.invokeHandler(QuarkusResteasyReactiveRequestContext.java:183)
+	at org.jboss.resteasy.reactive.common.core.AbstractResteasyReactiveContext.run(AbstractResteasyReactiveContext.java:147)
+	at io.quarkus.vertx.core.runtime.VertxCoreRecorder$15.runWith(VertxCoreRecorder.java:645)
+	at org.jboss.threads.EnhancedQueueExecutor$Task.doRunWith(EnhancedQueueExecutor.java:2651)
+	at org.jboss.threads.EnhancedQueueExecutor$Task.run(EnhancedQueueExecutor.java:2630)
+	at org.jboss.threads.EnhancedQueueExecutor.runThreadBody(EnhancedQueueExecutor.java:1622)
+	at org.jboss.threads.EnhancedQueueExecutor$ThreadBody.run(EnhancedQueueExecutor.java:1589)
+	at org.jboss.threads.DelegatingRunnable.run(DelegatingRunnable.java:11)
+	at org.jboss.threads.ThreadLocalResettingRunnable.run(ThreadLocalResettingRunnable.java:11)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+16-09-2026 17:56:34 INFO  [io.qu.de.de.RuntimeUpdatesProcessor] (vert.x-worker-thread-3) Files changed but restart not needed - notified extensions in: 0.027s 
+16-09-2026 17:56:34 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) LISTANDO TODOS OS USUARIOS [ ADM ACESS ]
+16-09-2026 17:56:34 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) TOTAL DE USUARIOS RETORNADOS: 2
+16-09-2026 17:56:34 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) LISTANDO TODOS OS USUARIOS [ ADM ACESS ]
+16-09-2026 17:56:34 INFO  [br.un.to.lg.Us.re.UsuarioResource] (executor-thread-1) TOTAL DE USUARIOS RETORNADOS: 2
