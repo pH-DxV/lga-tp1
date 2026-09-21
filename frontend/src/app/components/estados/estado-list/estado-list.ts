@@ -1,13 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+
 import { EstadoService } from '../../../services/estado.service';
 import { Estado } from '../../../models/estado.model';
+
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 
 @Component({
   imports: [
@@ -17,13 +22,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
+    MatPaginatorModule,
     RouterLink
   ],
   selector: 'app-estado-list',
   styleUrl: './estado-list.css',
   templateUrl: './estado-list.html',
 })
-export class EstadoListComponent {
+export class EstadoListComponent implements AfterViewInit {
 
   displayedColumns: string[] = [
     'numero',
@@ -35,12 +41,19 @@ export class EstadoListComponent {
 
   dataSource = new MatTableDataSource<Estado>();
 
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
+
   constructor(private estadoService: EstadoService) {}
 
   ngOnInit() {
     this.estadoService.findAll().subscribe((estados: Estado[]) => {
       this.dataSource.data = estados;
     });
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
   }
 
   applyFilter(event: Event) {

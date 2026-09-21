@@ -1,6 +1,7 @@
 <mat-toolbar class="mat-toolbar">
     <div class="flex-container">
         <span class="toolbar-title">Controle de Estados</span>
+
         <button mat-fab class="accent" routerLink="/estados/new">
             <mat-icon>add</mat-icon>
         </button>
@@ -9,13 +10,17 @@
 
 <mat-form-field appearance="outline" class="flex-container">
     <mat-label>Filtro</mat-label>
-    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Tocantins" #input>
+    <input matInput
+           (keyup)="applyFilter($event)"
+           placeholder="Ex. Tocantins"
+           #input>
 </mat-form-field>
 
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
     <ng-container matColumnDef="numero">
         <th mat-header-cell *matHeaderCellDef> Número </th>
+
         <td mat-cell *matCellDef="let obj; let i = index">
             {{i + 1}}
         </td>
@@ -23,6 +28,7 @@
 
     <ng-container matColumnDef="nome">
         <th mat-header-cell *matHeaderCellDef> Nome </th>
+
         <td mat-cell *matCellDef="let obj">
             {{obj.nome}}
         </td>
@@ -30,6 +36,7 @@
 
     <ng-container matColumnDef="sigla">
         <th mat-header-cell *matHeaderCellDef> Sigla </th>
+
         <td mat-cell *matCellDef="let obj">
             {{obj.sigla}}
         </td>
@@ -37,6 +44,7 @@
 
     <ng-container matColumnDef="regiao">
         <th mat-header-cell *matHeaderCellDef> Região </th>
+
         <td mat-cell *matCellDef="let obj">
             {{obj.regiao.nome}}
         </td>
@@ -44,18 +52,34 @@
 
     <ng-container matColumnDef="acao">
         <th mat-header-cell *matHeaderCellDef> Ação </th>
+
         <td mat-cell *matCellDef="let obj">
-            <button mat-icon-button color="primary" routerLink="/estados/edit/{{obj.id}}">
+
+            <button
+                mat-icon-button
+                color="primary"
+                routerLink="/estados/edit/{{obj.id}}">
                 <mat-icon>edit</mat-icon>
             </button>
 
-            <button mat-icon-button color="warn" (click)="excluir(obj.id)">
+            <button
+                mat-icon-button
+                color="warn"
+                (click)="excluir(obj.id)">
                 <mat-icon>delete</mat-icon>
             </button>
+
         </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
 </table>
+
+<mat-paginator
+    [pageSize]="5"
+    [pageSizeOptions]="[5, 10, 20]"
+    showFirstLastButtons>
+</mat-paginator>
