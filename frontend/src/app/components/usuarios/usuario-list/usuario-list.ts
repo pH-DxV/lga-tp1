@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { UsuarioService } from '../../../services/usuario.service';
@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 
 @Component({
   imports: [
@@ -19,13 +20,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
+    MatPaginatorModule,
     RouterLink
   ],
   selector: 'app-usuario-list',
   styleUrl: './usuario-list.css',
   templateUrl: './usuario-list.html',
 })
-export class UsuarioListComponent {
+export class UsuarioListComponent implements AfterViewInit {
 
   displayedColumns: string[] = [
     'numero',
@@ -38,6 +40,9 @@ export class UsuarioListComponent {
 
   dataSource = new MatTableDataSource<Usuario>();
 
+  @ViewChild(MatPaginator)
+  paginator!: MatPaginator;
+
   constructor(private usuarioService: UsuarioService) {}
 
   ngOnInit() {
@@ -46,21 +51,26 @@ export class UsuarioListComponent {
     });
   }
 
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+  }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   excluir(id: number): void {
-  this.usuarioService.delete(id).subscribe({
-    next: () => {
-      this.dataSource.data = this.dataSource.data.filter(
-        usuario => usuario.id !== id
-      );
-    },
-    error: (error) => {
-      console.error('Erro ao excluir usuário:', error);
-    }
-  });
-}
+    this.usuarioService.delete(id).subscribe({
+      next: () => {
+        this.dataSource.data = this.dataSource.data.filter(
+          usuario => usuario.id !== id
+        );
+      },
+      error: (error) => {
+        console.error('Erro ao excluir usuário:', error);
+      }
+    });
+  }
+
 }
