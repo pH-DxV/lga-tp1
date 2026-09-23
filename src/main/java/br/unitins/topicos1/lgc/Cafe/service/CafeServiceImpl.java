@@ -116,8 +116,10 @@ public class CafeServiceImpl implements CafeService {
         cafe.setPeso(dto.peso());
         
         // Busca o saldo atual para retornar no DTO (o update de produto não altera estoque)
+        estoqueService.atualizarEstoque(id, dto.estoque());
+
         Integer saldo = estoqueService.consultarQuantidade(id);
-        
+
         return CafeDTOResponse.valueOf(cafe, saldo);
     }
 

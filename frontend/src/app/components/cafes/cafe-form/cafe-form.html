@@ -1,0 +1,227 @@
+<mat-toolbar class="mat-toolbar">
+
+    <span class="toolbar-title">
+        {{ isEdit ? 'Editar Café' : 'Novo Café' }}
+    </span>
+
+</mat-toolbar>
+
+
+<mat-card>
+
+    <form
+        [formGroup]="form"
+        (ngSubmit)="salvar()">
+
+
+        <mat-form-field appearance="outline">
+
+            <mat-label>Nome</mat-label>
+
+            <input
+                matInput
+                formControlName="nome">
+
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+
+            <mat-label>Descrição</mat-label>
+
+            <textarea
+                matInput
+                formControlName="descricao">
+            </textarea>
+
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+
+            <mat-label>Marca</mat-label>
+
+            <mat-select formControlName="idMarca">
+
+                @for (marca of marcas; track marca.id) {
+
+                    <mat-option [value]="marca.id">
+                        {{ marca.nome }}
+                    </mat-option>
+
+                }
+
+            </mat-select>
+
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+
+            <mat-label>Categoria</mat-label>
+
+            <mat-select formControlName="idCategoriaDoCafe">
+
+                @for (categoria of categorias; track categoria.id) {
+
+                    <mat-option [value]="categoria.id">
+                        {{ categoria.nome }}
+                    </mat-option>
+
+                }
+
+            </mat-select>
+
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+
+            <mat-label>Nível de Torra</mat-label>
+
+            <mat-select formControlName="idNivelDeTorra">
+
+                <mat-option [value]="1">
+                    Clara
+                </mat-option>
+
+                <mat-option [value]="2">
+                    Média-Clara
+                </mat-option>
+
+                <mat-option [value]="3">
+                    Média
+                </mat-option>
+
+                <mat-option [value]="4">
+                    Média-Escura
+                </mat-option>
+
+                <mat-option [value]="5">
+                    Escura
+                </mat-option>
+
+            </mat-select>
+
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+
+            <mat-label>Tratamento</mat-label>
+
+            <mat-select formControlName="idTratamento">
+
+                <mat-option [value]="1">
+                    Natural (Seco)
+                </mat-option>
+
+                <mat-option [value]="2">
+                    Lavado (Wet Process)
+                </mat-option>
+
+                <mat-option [value]="3">
+                    Honey (Mucilage Process)
+                </mat-option>
+
+                <mat-option [value]="4">
+                    Semi-Lavado
+                </mat-option>
+
+                <mat-option [value]="5">
+                    Descascado Natural
+                </mat-option>
+
+                <mat-option [value]="6">
+                    Anaeróbico
+                </mat-option>
+
+                <mat-option [value]="7">
+                    Fermentação Controlada (Aeróbica)
+                </mat-option>
+
+                <mat-option [value]="8">
+                    Experimental / Híbrido
+                </mat-option>
+
+            </mat-select>
+
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+
+            <mat-label>Pontuação SCA</mat-label>
+
+            <input
+                matInput
+                type="number"
+                formControlName="pontuacaoSCA">
+
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+
+            <mat-label>Preço</mat-label>
+
+            <input
+                matInput
+                type="number"
+                step="0.01"
+                formControlName="preco">
+
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+
+            <mat-label>Peso (g)</mat-label>
+
+            <input
+                matInput
+                type="number"
+                step="0.01"
+                formControlName="peso">
+
+        </mat-form-field>
+
+
+        <mat-form-field appearance="outline">
+
+            <mat-label>Estoque</mat-label>
+
+            <input
+                matInput
+                type="number"
+                formControlName="estoque">
+
+        </mat-form-field>
+
+
+        <div class="botoes">
+
+            <button
+                mat-raised-button
+                type="button"
+                (click)="cancelar()">
+
+                Cancelar
+
+            </button>
+
+
+            <button
+                mat-raised-button
+                color="primary"
+                type="submit">
+
+                Salvar
+
+            </button>
+
+        </div>
+
+    </form>
+
+</mat-card>

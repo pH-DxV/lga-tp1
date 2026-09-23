@@ -1,0 +1,164 @@
+<mat-toolbar class="mat-toolbar">
+    <div class="flex-container">
+        <span class="toolbar-title">Controle de Cafés</span>
+
+        <button
+            mat-fab
+            class="accent"
+            routerLink="/cafes/new">
+
+            <mat-icon>add</mat-icon>
+
+        </button>
+    </div>
+</mat-toolbar>
+
+
+<mat-form-field
+    appearance="outline"
+    class="flex-container">
+
+    <mat-label>Filtro</mat-label>
+
+    <input
+        matInput
+        (keyup)="applyFilter($event)"
+        placeholder="Ex. Café Especial">
+
+</mat-form-field>
+
+
+<table
+    mat-table
+    [dataSource]="dataSource"
+    class="mat-elevation-z8">
+
+
+    <ng-container matColumnDef="numero">
+
+        <th mat-header-cell *matHeaderCellDef>
+            Número
+        </th>
+
+        <td mat-cell *matCellDef="let obj; let i = index">
+            {{ i + 1 }}
+        </td>
+
+    </ng-container>
+
+
+    <ng-container matColumnDef="nome">
+
+        <th mat-header-cell *matHeaderCellDef>
+            Nome
+        </th>
+
+        <td mat-cell *matCellDef="let obj">
+            {{ obj.nome }}
+        </td>
+
+    </ng-container>
+
+
+    <ng-container matColumnDef="marca">
+
+        <th mat-header-cell *matHeaderCellDef>
+            Marca
+        </th>
+
+        <td mat-cell *matCellDef="let obj">
+            {{ obj.marca?.nome }}
+        </td>
+
+    </ng-container>
+
+
+    <ng-container matColumnDef="categoria">
+
+        <th mat-header-cell *matHeaderCellDef>
+            Categoria
+        </th>
+
+        <td mat-cell *matCellDef="let obj">
+            {{ obj.categoriaDoCafe?.nome }}
+        </td>
+
+    </ng-container>
+
+
+    <ng-container matColumnDef="preco">
+
+        <th mat-header-cell *matHeaderCellDef>
+            Preço
+        </th>
+
+        <td mat-cell *matCellDef="let obj">
+            R$ {{ obj.preco }}
+        </td>
+
+    </ng-container>
+
+
+    <ng-container matColumnDef="estoque">
+
+        <th mat-header-cell *matHeaderCellDef>
+            Estoque
+        </th>
+
+        <td mat-cell *matCellDef="let obj">
+            {{ obj.estoque }}
+        </td>
+
+    </ng-container>
+
+
+    <ng-container matColumnDef="acao">
+
+        <th mat-header-cell *matHeaderCellDef>
+            Ação
+        </th>
+
+        <td mat-cell *matCellDef="let obj">
+
+            <button
+                mat-icon-button
+                color="primary"
+                routerLink="/cafes/edit/{{ obj.id }}">
+
+                <mat-icon>edit</mat-icon>
+
+            </button>
+
+
+            <button
+                mat-icon-button
+                color="warn"
+                (click)="excluir(obj.id)">
+
+                <mat-icon>delete</mat-icon>
+
+            </button>
+
+        </td>
+
+    </ng-container>
+
+
+    <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns">
+    </tr>
+
+
+    <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns;">
+    </tr>
+
+</table>
+
+
+<mat-paginator
+    [pageSizeOptions]="[5, 10, 25]"
+    showFirstLastButtons>
+</mat-paginator>

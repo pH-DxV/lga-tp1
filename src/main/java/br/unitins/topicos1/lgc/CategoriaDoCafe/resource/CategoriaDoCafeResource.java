@@ -31,7 +31,7 @@ public class CategoriaDoCafeResource {
     private static final Logger LOG = Logger.getLogger(CategoriaDoCafeResource.class);
 
     @POST
-    @RolesAllowed({"Administrador"})
+    // @RolesAllowed({"Administrador"})
     public Response create(@Valid CategoriaDoCafeDTO dto) {
         LOG.info("INICIANDO METODO create [ ADM ACESS ]");
         return Response.status(Status.CREATED).entity(service.create(dto)).build();
@@ -39,7 +39,7 @@ public class CategoriaDoCafeResource {
 
     @PUT
     @Path("/{id}")
-    @RolesAllowed({"Administrador"})
+    // @RolesAllowed({"Administrador"})
     public Response update(@PathParam("id") Long id, @Valid CategoriaDoCafeDTO dto) {
         LOG.info("INICIANDO METODO update PARA CATEGORIA: " + id +" [ ADM ACESS ]");
         return Response.ok(service.update(id, dto)).build();
@@ -47,7 +47,7 @@ public class CategoriaDoCafeResource {
 
     @DELETE
     @Path("/{id}")
-    @RolesAllowed({"Administrador"})
+    // @RolesAllowed({"Administrador"})
     public Response delete(@PathParam("id") Long id) {
         LOG.warn("INICIANDO METODO delete PARA CATEGORIA: " + id + " [ ADM ACESS ]");
         service.delete(id);
@@ -55,7 +55,7 @@ public class CategoriaDoCafeResource {
     }
 
     @GET
-    @RolesAllowed({"Administrador", "Usuario"})
+   // @RolesAllowed({"Administrador", "Usuario"})
     public Response findAll() {
         LOG.info("LISTANDO TODOS AS CATEGORIAS DE CAFE");
         return Response.ok(service.findAll()).build();

@@ -1,0 +1,20 @@
+.mat-toolbar {
+    margin-bottom: 20px;
+}
+
+.flex-container {
+    display: flex;
+    align-items: center;
+}
+
+.toolbar-title {
+    flex: 1;
+}
+
+table {
+    width: 100%;
+}
+
+mat-paginator {
+    margin-top: 10px;
+}

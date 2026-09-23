@@ -1,0 +1,38 @@
+.mat-toolbar {
+  margin-bottom: 20px;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar-title {
+  font-size: 20px;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-column-id {
+  width: 10%;
+}
+
+.mat-column-nome {
+  width: 30%;
+}
+
+.mat-column-estado {
+  width: 30%;
+}
+
+.mat-column-acao {
+  width: 20%;
+  text-align: center;
+}
+
+mat-paginator {
+  margin-top: 10px;
+}

@@ -33,7 +33,7 @@ public class MunicipioResource {
     private static final Logger LOG = Logger.getLogger(MunicipioResource.class);
 
     @GET
-    @RolesAllowed({"Administrador", "Usuario"})
+    // @RolesAllowed({"Administrador", "Usuario"})
     public Response buscarTodos() {
         LOG.info("LISTANDO TODOS OS MUNICIPIOS");
         List<MunicipioDTOResponse> lista = service.findAll();
@@ -44,7 +44,7 @@ public class MunicipioResource {
     // Adicionado o findById (essencial)
     @GET
     @Path("/{id}")
-    @RolesAllowed({"Administrador", "Usuario"})
+    // @RolesAllowed({"Administrador", "Usuario"})
     public Response findById(@PathParam("id") Long id) {
         LOG.info("BUSCANDO OS DETALHES DO MUNICIPIO: " + id + " POR ID");
         return Response.ok(service.findById(id)).build();
@@ -52,7 +52,7 @@ public class MunicipioResource {
 
     @GET
     @Path("/find/{nome}")
-    @RolesAllowed({"Administrador", "Usuario"})
+    // @RolesAllowed({"Administrador", "Usuario"})
     public Response buscarPorNome(@PathParam("nome") String nome) { // Corrigido
         LOG.info("BUSCANDO POR NOME: '"+ nome + "'");
         List<MunicipioDTOResponse> lista = service.findByNome(nome);
@@ -61,7 +61,7 @@ public class MunicipioResource {
 
     @POST
     @Transactional // Adicionado
-    @RolesAllowed({"Administrador"})
+    // @RolesAllowed({"Administrador"})
     public Response incluir(MunicipioDTO dto) {
         LOG.info("INICIANDO METODO create");
         MunicipioDTOResponse retorno = service.create(dto);
@@ -71,7 +71,7 @@ public class MunicipioResource {
     @PUT
     @Path("/{id}")
     @Transactional // Adicionado
-    @RolesAllowed({"Administrador"})
+    // @RolesAllowed({"Administrador"})
     public Response alterar(@PathParam("id") Long id, MunicipioDTO dto) { // Corrigido
         LOG.info("INICIANDO METODO update PARA MUNICIPIO: "+ id);
         MunicipioDTOResponse retorno = service.update(id, dto);
@@ -81,7 +81,7 @@ public class MunicipioResource {
     @DELETE
     @Path("/{id}")
     @Transactional // Adicionado
-    @RolesAllowed({"Administrador"})
+    // @RolesAllowed({"Administrador"})
     public Response apagar(@PathParam("id") Long id) { // Corrigido
         LOG.warn("INICIANDO METODO delete PARA MUNICIPIO: " + id);
         service.delete(id);

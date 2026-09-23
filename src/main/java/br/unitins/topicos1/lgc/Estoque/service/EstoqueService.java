@@ -13,4 +13,7 @@ public interface EstoqueService {
     
     // Consulta simples
     Integer consultarQuantidade(Long idCafe);
+
+    // Atualizar estoque
+    void atualizarEstoque(Long idCafe, Integer quantidade);
 }

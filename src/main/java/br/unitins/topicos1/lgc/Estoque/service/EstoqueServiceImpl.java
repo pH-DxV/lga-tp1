@@ -24,54 +24,125 @@ public class EstoqueServiceImpl implements EstoqueService {
     @Override
     @Transactional
     public void iniciarEstoque(Long idCafe, Integer quantidadeInicial) {
+
         Cafe cafe = cafeRepository.findById(idCafe);
-        if (cafe == null) throw new NotFoundException("Café não encontrado.");
-        
+
+        if (cafe == null) {
+            throw new NotFoundException("Café não encontrado.");
+        }
+
         // Evita duplicidade
         if (estoqueRepository.findByIdCafe(idCafe) != null) {
-             throw new BadRequestException("O estoque para este café já foi iniciado.");
+            throw new BadRequestException(
+                "O estoque para este café já foi iniciado."
+            );
         }
 
         Estoque estoque = new Estoque();
+
         estoque.setCafe(cafe);
-        estoque.setQuantidade(quantidadeInicial != null ? quantidadeInicial : 0);
+        estoque.setQuantidade(
+            quantidadeInicial != null ? quantidadeInicial : 0
+        );
         estoque.setDataUltimaMovimentacao(LocalDateTime.now());
-        
+
         estoqueRepository.persist(estoque);
     }
 
     @Override
     @Transactional
     public void adicionarEstoque(Long idCafe, Integer quantidade) {
-        Estoque estoque = estoqueRepository.findByIdCafe(idCafe);
-        if (estoque == null) throw new NotFoundException("Estoque não iniciado para este produto.");
-        
-        if (quantidade == null || quantidade <= 0) throw new BadRequestException("Quantidade deve ser positiva.");
 
-        estoque.setQuantidade(estoque.getQuantidade() + quantidade);
-        estoque.setDataUltimaMovimentacao(LocalDateTime.now());
+        Estoque estoque = estoqueRepository.findByIdCafe(idCafe);
+
+        if (estoque == null) {
+            throw new NotFoundException(
+                "Estoque não iniciado para este produto."
+            );
+        }
+
+        if (quantidade == null || quantidade <= 0) {
+            throw new BadRequestException(
+                "Quantidade deve ser positiva."
+            );
+        }
+
+        estoque.setQuantidade(
+            estoque.getQuantidade() + quantidade
+        );
+
+        estoque.setDataUltimaMovimentacao(
+            LocalDateTime.now()
+        );
     }
 
     @Override
     @Transactional
     public void baixarEstoque(Long idCafe, Integer quantidade) {
+
         Estoque estoque = estoqueRepository.findByIdCafe(idCafe);
-        
+
         if (estoque == null) {
-            throw new NotFoundException("Estoque não encontrado para este produto.");
-        }
-        
-        if (estoque.getQuantidade() < quantidade) {
-            throw new BadRequestException("Estoque insuficiente. Disponível: " + estoque.getQuantidade());
+            throw new NotFoundException(
+                "Estoque não encontrado para este produto."
+            );
         }
 
-        estoque.setQuantidade(estoque.getQuantidade() - quantidade);
-        estoque.setDataUltimaMovimentacao(LocalDateTime.now());
+        if (quantidade == null || quantidade <= 0) {
+            throw new BadRequestException(
+                "Quantidade deve ser positiva."
+            );
+        }
+
+        if (estoque.getQuantidade() < quantidade) {
+            throw new BadRequestException(
+                "Estoque insuficiente. Disponível: "
+                + estoque.getQuantidade()
+            );
+        }
+
+        estoque.setQuantidade(
+            estoque.getQuantidade() - quantidade
+        );
+
+        estoque.setDataUltimaMovimentacao(
+            LocalDateTime.now()
+        );
+    }
+
+    @Override
+    @Transactional
+    public void atualizarEstoque(Long idCafe, Integer quantidade) {
+
+        Estoque estoque = estoqueRepository.findByIdCafe(idCafe);
+
+        if (estoque == null) {
+            throw new NotFoundException(
+                "Estoque não encontrado para este produto."
+            );
+        }
+
+        if (quantidade == null || quantidade < 0) {
+            throw new BadRequestException(
+                "A quantidade do estoque deve ser zero ou maior."
+            );
+        }
+
+        estoque.setQuantidade(quantidade);
+
+        estoque.setDataUltimaMovimentacao(
+            LocalDateTime.now()
+        );
     }
 
     @Override
     public Integer consultarQuantidade(Long idCafe) {
+
         Estoque estoque = estoqueRepository.findByIdCafe(idCafe);
-        return (estoque != null) ? estoque.getQuantidade() : 0;
+
+        return (estoque != null)
+            ? estoque.getQuantidade()
+            : 0;
     }
 }
+

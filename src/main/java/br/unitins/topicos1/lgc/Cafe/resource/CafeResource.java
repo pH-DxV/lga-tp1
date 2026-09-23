@@ -33,7 +33,7 @@ public class CafeResource {
     private static final Logger LOG = Logger.getLogger(CafeResource.class);
 
     @POST
-    @RolesAllowed("Administrador")
+//    @RolesAllowed("Administrador")
     public Response create(@Valid CafeDTO dto) {
         LOG.info("INICIANDO METODO create");
         return Response.status(Status.CREATED).entity(cafeService.create(dto)).build();
@@ -42,7 +42,7 @@ public class CafeResource {
     @PUT
     @Transactional
     @Path("/{id}")
-    @RolesAllowed("Administrador")
+//    @RolesAllowed("Administrador")
     public Response update(@PathParam("id") Long id, @Valid CafeDTO dto) {
         LOG.info("INICIANDO METODO update PARA CAFE" + id);
         return Response.ok(cafeService.update(id, dto)).build();
@@ -51,7 +51,7 @@ public class CafeResource {
     @DELETE
     @Transactional
     @Path("/{id}")
-    @RolesAllowed("Administrador")
+//    @RolesAllowed("Administrador")
     public Response delete(@PathParam("id") Long id) {
         LOG.warn("INICIANDO METODO deletet PARA CAFE"+ id + " [ ADM ACESS ]");
         cafeService.delete(id);
