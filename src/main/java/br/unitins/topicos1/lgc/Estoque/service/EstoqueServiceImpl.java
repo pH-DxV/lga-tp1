@@ -144,5 +144,19 @@ public class EstoqueServiceImpl implements EstoqueService {
             ? estoque.getQuantidade()
             : 0;
     }
+
+    @Override
+    @Transactional
+    public void excluirEstoque(Long idCafe) {
+
+        Estoque estoque = estoqueRepository.findByIdCafe(idCafe);
+
+        if (estoque != null) {
+            estoqueRepository.delete(estoque);
+        }
+    }
+
+
+
 }
 

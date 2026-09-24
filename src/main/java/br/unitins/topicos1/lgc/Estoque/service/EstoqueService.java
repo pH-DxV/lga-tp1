@@ -16,4 +16,7 @@ public interface EstoqueService {
 
     // Atualizar estoque
     void atualizarEstoque(Long idCafe, Integer quantidade);
+
+    // Excluir estoque
+    void excluirEstoque(Long idCafe);
 }

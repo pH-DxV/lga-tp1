@@ -126,9 +126,18 @@ public class CafeServiceImpl implements CafeService {
     @Override
     @Transactional
     public void delete(Long id) {
-        if (!cafeRepository.deleteById(id)) {
+
+        Cafe cafe = cafeRepository.findById(id);
+
+        if (cafe == null) {
             throw new NotFoundException("Café não encontrado.");
         }
+
+        // Primeiro remove o estoque associado
+        estoqueService.excluirEstoque(id);
+
+        // Depois remove o café
+        cafeRepository.delete(cafe);
     }
 
     @Override
